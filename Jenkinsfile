@@ -17,10 +17,7 @@ pipeline {
                 script {
                     dir('/usr/src/app/pond_back') {
                         withEnv(['JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64', 'PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH']) {
-                            sh 'printenv JAVA_HOME'
-                            sh 'printenv PATH'
-                            sh 'java -version'
-                            sh './gradlew --version'
+                            sh '/opt/java/temurin-17/bin/java -jar /usr/src/app/pond_back/gradle/wrapper/gradle-wrapper.jar --version'
                         }
                     }
                 }
