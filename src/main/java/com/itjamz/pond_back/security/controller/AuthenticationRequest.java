@@ -1,4 +1,4 @@
-package com.itjamz.pond_back.controller;
+package com.itjamz.pond_back.security.controller;
 
 class AuthenticationRequest {
     private String username;

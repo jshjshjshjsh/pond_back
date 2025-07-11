@@ -1,4 +1,4 @@
-package com.itjamz.pond_back.controller;
+package com.itjamz.pond_back.security.controller;
 
 import com.itjamz.pond_back.security.JwtUtil;
 import com.itjamz.pond_back.service.UserService;
