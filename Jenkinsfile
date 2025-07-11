@@ -17,7 +17,7 @@ pipeline {
                 script {
                     dir('/usr/src/app/pond_back') {
                         withEnv(['JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64', 'PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH']) {
-                            sh './gradlew bootJar'
+                            sh './gradlew bootJar --no-daemon --stacktrace --info'
                         }
                     }
                 }
