@@ -6,6 +6,7 @@ pipeline {
             steps {
                 script {
                     dir('/usr/src/app/pond_back') {
+                        sh 'git config --global --add safe.directory /usr/src/app/pond_back'
                         sh 'git pull origin main'
                     }
                 }
