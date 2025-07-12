@@ -1,7 +1,7 @@
 package com.itjamz.pond_back.security.controller;
 
 import com.itjamz.pond_back.security.JwtUtil;
-import com.itjamz.pond_back.service.UserService;
+import com.itjamz.pond_back.security.service.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,7 +25,7 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private UserService userService;
+    private UserDetailServiceImpl userDetailService;
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
@@ -37,7 +37,7 @@ public class AuthController {
             throw new Exception("Incorrect username or password", e);
         }
 
-        final UserDetails userDetails = userService.loadUserByUsername(authenticationRequest.getUsername());
+        final UserDetails userDetails = userDetailService.loadUserByUsername(authenticationRequest.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails);
 
         Map<String, String> response = new HashMap<>();
