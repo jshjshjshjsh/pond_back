@@ -34,7 +34,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/authenticate", "/register", "/", "/hello", "/api/hello", "/test").permitAll()
+                        .requestMatchers("/notice/**").hasAnyRole("ADMIN", "NORMAL") // 회원 전용 페이지
+                        .requestMatchers("/", "/member/register").permitAll() // 전체 허용 페이지
+                        .requestMatchers("/hello", "/test/**").permitAll() // 테스트용
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
