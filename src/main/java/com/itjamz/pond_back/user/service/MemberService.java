@@ -18,7 +18,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void memberRegister(Member member) {
+    public Member memberRegister(Member member) {
         if (memberRepository.findById(member.getId()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[회원가입 실패] 이미 존재하는 사번");
         }
@@ -26,7 +26,7 @@ public class MemberService {
         String encodedPw = passwordEncoder.encode(member.getPw());
         member.initRegister(encodedPw, Member_Role.ROLE_NORMAL);
 
-        memberRepository.save(member);
+        return memberRepository.save(member);
     }
 }
 

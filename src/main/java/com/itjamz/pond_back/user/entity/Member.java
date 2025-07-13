@@ -2,16 +2,14 @@ package com.itjamz.pond_back.user.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.*;
 
 @Entity
-//@Builder
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Member {
 
     @Id
