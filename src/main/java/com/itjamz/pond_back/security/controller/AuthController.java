@@ -2,6 +2,7 @@ package com.itjamz.pond_back.security.controller;
 
 import com.itjamz.pond_back.security.JwtUtil;
 import com.itjamz.pond_back.security.service.UserDetailServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,19 +17,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final UserDetailServiceImpl userDetailService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private UserDetailServiceImpl userDetailService;
-
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getId(), authenticationRequest.getPw())
+            );
+        } catch (BadCredentialsException e) {
+            throw new Exception("Incorrect username or password", e);
+        }
+
+        final UserDetails userDetails = userDetailService.loadUserByUsername(authenticationRequest.getId());
+        final String jwt = jwtUtil.generateToken(userDetails);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("jwt", jwt);
+        return ResponseEntity.ok(response);
+    }
+
+    /*
+    @PostMapping("/authenticate")
+    public ResponseEntity<?> createAuthenticationTokenOld(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
@@ -44,4 +60,6 @@ public class AuthController {
         response.put("jwt", jwt);
         return ResponseEntity.ok(response);
     }
+
+     */
 }

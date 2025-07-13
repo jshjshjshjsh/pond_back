@@ -1,8 +1,7 @@
 package com.itjamz.pond_back.user.service;
 
-import com.itjamz.pond_back.user.entity.Member;
+import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.repository.MemberRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,10 +13,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.swing.*;
-
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 class MemberServiceTest {

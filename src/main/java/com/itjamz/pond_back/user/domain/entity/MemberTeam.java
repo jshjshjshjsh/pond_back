@@ -1,4 +1,4 @@
-package com.itjamz.pond_back.user.entity;
+package com.itjamz.pond_back.user.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

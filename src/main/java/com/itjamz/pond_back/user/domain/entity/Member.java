@@ -1,4 +1,4 @@
-package com.itjamz.pond_back.user.entity;
+package com.itjamz.pond_back.user.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +15,7 @@ public class Member {
     @Id
     private String sabun;
     @NotNull
+    @Column(unique = true)
     private String id;
     @NotNull
     private String pw;

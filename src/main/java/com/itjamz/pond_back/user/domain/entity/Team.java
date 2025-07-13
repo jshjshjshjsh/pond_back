@@ -1,8 +1,10 @@
-package com.itjamz.pond_back.user.entity;
+package com.itjamz.pond_back.user.domain.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,10 +16,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Team {
 
     @Id @GeneratedValue
     private Long teamCode;
+    @Column(unique = true)
     private String teamName;
     @CreatedDate
     private LocalDateTime createTime;

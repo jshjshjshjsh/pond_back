@@ -1,17 +1,13 @@
 package com.itjamz.pond_back.user.repository;
 
-import com.itjamz.pond_back.user.entity.Member;
-import jakarta.validation.ConstraintViolation;
+import com.itjamz.pond_back.user.domain.entity.Member;
 import jakarta.validation.ConstraintViolationException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

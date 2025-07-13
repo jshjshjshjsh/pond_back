@@ -1,4 +1,4 @@
-package com.itjamz.pond_back.user.entity;
+package com.itjamz.pond_back.user.domain.entity;
 
 public enum Member_Role {
     ROLE_ADMIN, ROLE_NORMAL

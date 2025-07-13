@@ -39,7 +39,7 @@ public class ExceptionController {
             StackTraceElement topElement = e.getStackTrace()[0];
             location = String.format("at %s.%s(line:%d)", topElement.getClassName(), topElement.getMethodName(), topElement.getLineNumber());
         }
-        log.warn("[error] {} {}", e.getMessage(), location);
+        log.warn("[ERROR] Message: {}, Location: {}", e.getMessage(), location);
 
         return new ResponseEntity<>(errorResponse, status);
     }
