@@ -1,6 +1,8 @@
 package com.itjamz.pond_back.user.service;
 
 import com.itjamz.pond_back.user.domain.entity.Team;
+import com.itjamz.pond_back.user.repository.MemberRepository;
+import com.itjamz.pond_back.user.repository.MemberTeamRepository;
 import com.itjamz.pond_back.user.repository.TeamRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,11 +23,15 @@ class TeamServiceTest {
     TeamService teamService;
 
     @MockitoBean
+    MemberRepository memberRepository;
+    @MockitoBean
     TeamRepository teamRepository;
+    @MockitoBean
+    MemberTeamRepository memberTeamRepository;
 
     @BeforeEach
     void setUp(){
-        teamService = new TeamService(teamRepository);
+        teamService = new TeamService(memberRepository, teamRepository, memberTeamRepository);
     }
 
 
@@ -35,7 +41,7 @@ class TeamServiceTest {
 
         // given
         Team team = Team.builder().teamName("testTeam1").build();
-        ReflectionTestUtils.setField(team, "teamCode", 1L);
+        ReflectionTestUtils.setField(team, "id", 1L);
 
         // when
         Mockito.when(teamRepository.save(team)).thenReturn(team);
@@ -43,7 +49,7 @@ class TeamServiceTest {
         // then
         Team teamRegister = teamService.teamRegister(team);
 
-        assertThat(teamRegister.getTeamCode()).isEqualTo(1L);
+        assertThat(teamRegister.getId()).isEqualTo(1L);
         assertThat(teamRegister.getTeamName()).isEqualTo(team.getTeamName());
     }
 }

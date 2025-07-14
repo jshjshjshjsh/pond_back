@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Builder
 @Getter
@@ -25,6 +28,9 @@ public class Member {
     @Column(length = 15)
     @NotNull
     private Member_Role role;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberTeam> memberTeams = new ArrayList<>();
 
     public void encodedPw(String pw){
         this.pw = pw;
