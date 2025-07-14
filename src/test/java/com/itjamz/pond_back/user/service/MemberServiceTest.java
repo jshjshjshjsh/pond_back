@@ -1,6 +1,7 @@
 package com.itjamz.pond_back.user.service;
 
 import com.itjamz.pond_back.user.domain.entity.Member;
+import com.itjamz.pond_back.user.domain.entity.Member_Role;
 import com.itjamz.pond_back.user.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +36,7 @@ class MemberServiceTest {
     void memberRegisterSuccess() {
 
         // given
-        Member member = Member.builder().sabun("123456").id("tester").pw("pwtest").name("테스터").build();
+        Member member = Member.builder().sabun("123456").id("tester").pw("pwtest").name("테스터").role(Member_Role.ROLE_NORMAL).build();
         ReflectionTestUtils.setField(member, "pw", passwordEncoder.encode("pwtest"));
 
         // when

@@ -26,8 +26,7 @@ public class Member {
     @NotNull
     private Member_Role role;
 
-    public void initRegister(String pw, Member_Role role){
+    public void encodedPw(String pw){
         this.pw = pw;
-        this.role = role;
     }
 }

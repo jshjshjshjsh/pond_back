@@ -27,7 +27,7 @@ public class MemberService {
         }
 
         String encodedPw = passwordEncoder.encode(member.getPw());
-        member.initRegister(encodedPw, Member_Role.ROLE_NORMAL);
+        member.encodedPw(encodedPw);
 
         return memberRepository.save(member);
     }
