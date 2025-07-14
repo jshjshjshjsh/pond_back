@@ -32,7 +32,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/team/**","/notice/**").hasAnyRole("ADMIN", "NORMAL") // 회원 전용 페이지
-                        .requestMatchers("/","/login", "/member/register").permitAll() // 전체 허용 페이지
+                        .requestMatchers("/","/login", "/login/refresh", "/member/register").permitAll() // 전체 허용 페이지
                         .requestMatchers("/hello", "/test/**").permitAll() // 테스트용
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
