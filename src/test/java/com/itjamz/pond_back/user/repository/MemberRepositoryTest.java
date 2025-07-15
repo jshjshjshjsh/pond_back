@@ -34,7 +34,12 @@ class MemberRepositoryTest {
     @DisplayName("멤버 저장 성공")
     void memberRegisterSuccess(){
         // given
-        Member member = Member.builder().sabun("123456").id("tester").pw(passwordEncoder.encode("pwtest")).name("테스터").build();
+        Member member = Member
+                .builder()
+                .sabun("123456")
+                .id("tester")
+                .pw(passwordEncoder.encode("pwtest"))
+                .name("테스터").build();
 
         // when
         Member memberRegister = memberRepository.save(member);
@@ -50,7 +55,12 @@ class MemberRepositoryTest {
     @DisplayName("맴버 필드 오류 발생")
     void memberRegisterFail(){
         // given
-        Member member = Member.builder().sabun("123456").id("tester").pw(passwordEncoder.encode("pwtest")).build();
+        Member member = Member
+                .builder()
+                .sabun("123456")
+                .id("tester")
+                .pw(passwordEncoder.encode("pwtest"))
+                .build();
 
         // when & then
         assertThatThrownBy(() -> {
