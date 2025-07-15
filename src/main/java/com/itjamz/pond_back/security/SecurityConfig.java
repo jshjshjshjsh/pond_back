@@ -35,6 +35,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/notice/**").hasAnyRole("ADMIN", "NORMAL") // 회원 전용 페이지
+                        .requestMatchers("/calendar/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // 회원 전용 페이지
                         .requestMatchers("/", "/member/register").permitAll() // 전체 허용 페이지
                         .requestMatchers("/hello", "/test/**").permitAll() // 테스트용
                         .anyRequest().authenticated())
