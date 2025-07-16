@@ -34,8 +34,9 @@ public class CalendarController {
      *                         (startDate, endDate) 기준으로 사이에 있는 것만 가져옴
      * */
     @GetMapping("/workhistory/list")
-    public ResponseEntity<?> workHistoryList(@RequestParam("startDate")LocalDate startDate, @RequestParam("endDate")LocalDate endDate){
+    public ResponseEntity<?> workHistoryList(@RequestParam("startDate")LocalDate startDate, @RequestParam("endDate")LocalDate endDate,
+                                             @AuthenticationPrincipal CustomUserDetails userDetails){
 
-        return ResponseEntity.ok(calendarService.findWorkHistoryByDate(startDate, endDate));
+        return ResponseEntity.ok(calendarService.findWorkHistoryByDate(startDate, endDate, userDetails.getMember()));
     }
 }

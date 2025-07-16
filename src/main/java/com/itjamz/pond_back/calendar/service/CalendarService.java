@@ -42,10 +42,9 @@ public class CalendarService {
         return workHistoryRepository.save(workHistory);
     }
 
-    public List<WorkHistory> findWorkHistoryByDate(LocalDate startDate, LocalDate endDate) {
-        return workHistoryRepository.findWorkHistoriesByBetweenSearchDate(startDate.atStartOfDay(), endDate.atStartOfDay());
-        //List<WorkHistory> workHistories = workHistoryRepository.findWorkHistoriesByBetweenSearchDate(startDate.atStartOfDay(), endDate.atStartOfDay());
-        //return workHistories.stream().map(this::convertToDto).collect(Collectors.toList());
+    public List<WorkHistoryDto> findWorkHistoryByDate(LocalDate startDate, LocalDate endDate, Member member) {
+        List<WorkHistory> workHistories = workHistoryRepository.findWorkHistoriesByBetweenSearchDate(startDate.atStartOfDay(), endDate.atStartOfDay(), member.getSabun());
+        return workHistories.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     private WorkHistoryDto convertToDto(WorkHistory workHistory) {
