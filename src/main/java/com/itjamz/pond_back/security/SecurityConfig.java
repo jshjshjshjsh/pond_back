@@ -17,9 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -31,12 +28,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/notice/**").hasAnyRole("ADMIN", "NORMAL") // 회원 전용 페이지
-                        .requestMatchers("/calendar/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // 회원 전용 페이지
-                        .requestMatchers("/", "/member/register").permitAll() // 전체 허용 페이지
+                        .requestMatchers("/team/leader/**").hasAnyRole("ADMIN", "LEADER") // 회원 전용 페이지
+                        .requestMatchers("/team/**","/calendar/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // 회원 전용 페이지
+                        .requestMatchers("/","/login", "/login/refresh", "/member/register").permitAll() // 전체 허용 페이지
                         .requestMatchers("/hello", "/test/**").permitAll() // 테스트용
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
