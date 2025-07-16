@@ -1,5 +1,6 @@
 package com.itjamz.pond_back.user.service;
 
+import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.dto.MemberTeamJoinDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberTeam;
@@ -20,12 +21,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TeamService {
 
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final MemberTeamRepository memberTeamRepository;
 
+    @Transactional
     public Team teamRegister(Team team){
         if (teamRepository.findTeamByTeamName(team.getTeamName()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[팀 등록 실패] 이미 존재하는 팀");
@@ -59,5 +62,12 @@ public class TeamService {
     
     public Optional<Team> findTeamById(Long teamId){
         return teamRepository.findById(teamId);
+    }
+
+    public List<MemberDto> getTeamMembersForUser(String sabun) {
+        List<Member> members = memberRepository.findTeamMembersByMemberSabun(sabun);
+        return members.stream()
+                .map(MemberDto::from)
+                .collect(Collectors.toList());
     }
 }

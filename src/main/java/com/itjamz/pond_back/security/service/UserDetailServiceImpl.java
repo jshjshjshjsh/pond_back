@@ -1,5 +1,6 @@
 package com.itjamz.pond_back.security.service;
 
+import com.itjamz.pond_back.security.domain.CustomUserDetails;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,13 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
+        Member member = memberService.findMemberById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+
+        // Member 정보를 담은 CustomUserDetails 객체를 반환
+        return new CustomUserDetails(member);
+
+        /*
         Optional<Member> memberOptional = memberService.findMemberById(id);
 
         if (memberOptional.isPresent()) {
@@ -30,5 +38,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         } else {
             throw new UsernameNotFoundException("User not found with id: " + id);
         }
+
+         */
     }
 }
