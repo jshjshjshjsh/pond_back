@@ -1,7 +1,7 @@
 package com.itjamz.pond_back.calendar.domain.entity;
 
-import com.itjamz.pond_back.user.entity.Member;
-import com.itjamz.pond_back.user.entity.Team;
+import com.itjamz.pond_back.user.domain.entity.Member;
+import com.itjamz.pond_back.user.domain.entity.Team;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
