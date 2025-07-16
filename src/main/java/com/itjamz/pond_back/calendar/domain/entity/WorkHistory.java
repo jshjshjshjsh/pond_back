@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class WorkHistory {
 
+
     @Id @GeneratedValue
     private Long id;
 
