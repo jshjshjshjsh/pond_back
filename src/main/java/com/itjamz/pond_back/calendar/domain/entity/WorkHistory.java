@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class WorkHistory {
 
 
-    @Id @GeneratedValue()
+    @Id @GeneratedValue
     private Long id;
 
     @NotNull

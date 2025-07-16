@@ -14,9 +14,14 @@ public interface WorkHistoryRepository extends JpaRepository<WorkHistory, Long> 
 
 
     @Query(" SELECT DISTINCT wh FROM WorkHistory wh " +
-            "    JOIN MemberTeam mt_wh ON wh.member.sabun = mt_wh.member.sabun " +
-            "    JOIN MemberTeam mt_target ON mt_wh.team.id = mt_target.team.id " +
-            "    WHERE mt_target.member.sabun = :memberSabun" +
+            "    WHERE wh.member.sabun = :memberSabun " +
             "    AND wh.endDate >= :startDate AND wh.startDate <= :endDate ")
     List<WorkHistory> findWorkHistoriesByBetweenSearchDate(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, String memberSabun);
+
+    @Query(" SELECT DISTINCT wh FROM WorkHistory wh " +
+            "    JOIN MemberTeam mt_wh ON wh.member.sabun = mt_wh.member.sabun " +
+            "    JOIN MemberTeam mt_target ON mt_wh.team.id = mt_target.team.id " +
+            "    WHERE mt_target.member.sabun = :memberSabun " +
+            "    AND wh.endDate >= :startDate AND wh.startDate <= :endDate ")
+    List<WorkHistory> findWorkHistoriesByBetweenSearchDateAndMyTeams(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, String memberSabun);
 }
