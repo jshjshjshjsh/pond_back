@@ -52,7 +52,7 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(true) // HTTPS 환경에서만 전송
                 .path("/")
-                .maxAge(7 * 24 * 60 * 60) // 7일
+                .maxAge(7L * 24 * 60 * 60) // 7일
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
