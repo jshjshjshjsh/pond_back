@@ -22,8 +22,8 @@ public class MemberService {
 
     @Transactional
     public Member memberRegister(Member member) {
-        if (memberRepository.findMemberBySabun(member.getSabun()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[회원가입 실패] 이미 존재하는 사번");
+        if (memberRepository.findMemberByIdOrSabun(member.getId(), member.getSabun()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[회원가입 실패] 이미 존재하는 ID 또는 사번");
         }
 
         String encodedPw = passwordEncoder.encode(member.getPw());
