@@ -20,14 +20,14 @@ public class TeamController {
     private final TeamService teamService;
 
     @PostMapping("/leader/register")
-    public ResponseEntity<?> teamRegister(@RequestBody Team team) {
+    public ResponseEntity<Void> teamRegister(@RequestBody Team team) {
         teamService.teamRegister(team);
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/leader/{teamId}/members")
-    public ResponseEntity<?> joinTeam(@PathVariable Long teamId, @RequestBody MemberTeamJoinDto memberTeamJoinDto) {
+    public ResponseEntity<Void> joinTeam(@PathVariable Long teamId, @RequestBody MemberTeamJoinDto memberTeamJoinDto) {
         memberTeamJoinDto.setTeamId(teamId);
         teamService.joinTeam(memberTeamJoinDto);
 
@@ -36,9 +36,8 @@ public class TeamController {
 
     @GetMapping("/my-teams/members")
     public ResponseEntity<List<MemberDto>> getMyTeamMembers(@AuthenticationPrincipal CustomUserDetails userDetails){
-        List<MemberDto> teamMembers = teamService.getTeamMembersForUser(userDetails.getMember().getSabun());
 
-        return ResponseEntity.ok(teamMembers);
+        return ResponseEntity.ok(teamService.getTeamMembersForUser(userDetails.getMember().getSabun()));
     }
 
 }

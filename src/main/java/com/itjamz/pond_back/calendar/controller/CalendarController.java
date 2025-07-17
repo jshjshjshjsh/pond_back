@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/calendar")
@@ -18,7 +19,7 @@ public class CalendarController {
     private final CalendarService calendarService;
 
     @PostMapping("/workhistory/save")
-    public ResponseEntity<?> saveWorkHistory(@RequestBody WorkHistoryDto workHistoryDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<Void> saveWorkHistory(@RequestBody WorkHistoryDto workHistoryDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         calendarService.saveWorkHistory(workHistoryDto, userDetails.getMember());
 
         return ResponseEntity.ok().build();
@@ -34,8 +35,8 @@ public class CalendarController {
      *                         (startDate, endDate) 기준으로 사이에 있는 것만 가져옴
      * */
     @GetMapping("/workhistory/list")
-    public ResponseEntity<?> workHistoryList(@RequestParam("startDate")LocalDate startDate, @RequestParam("endDate")LocalDate endDate,
-                                             @AuthenticationPrincipal CustomUserDetails userDetails){
+    public ResponseEntity<List<WorkHistoryDto>> workHistoryList(@RequestParam("startDate")LocalDate startDate, @RequestParam("endDate")LocalDate endDate,
+                                                                @AuthenticationPrincipal CustomUserDetails userDetails){
 
         return ResponseEntity.ok(calendarService.findWorkHistoryByDate(startDate, endDate, userDetails.getMember()));
     }
