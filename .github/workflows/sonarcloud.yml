@@ -27,6 +27,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # GitHub Secret에서 application.yml 내용을 가져와 파일로 생성
+      - name: Create application-test.yml
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
+
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
@@ -50,4 +56,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # 2단계에서 저장한 SonarCloud 토큰
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        # 이제 별도의 시스템 속성(-D) 없이 실행
         run: ./gradlew build sonarqube --info
