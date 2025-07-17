@@ -23,7 +23,4 @@ public class Team {
     private String teamName;
     @CreatedDate
     private LocalDateTime createTime;
-
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MemberTeam> memberTeams = new ArrayList<>();
 }
