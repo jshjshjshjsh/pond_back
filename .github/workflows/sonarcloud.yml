@@ -27,11 +27,24 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # GitHub Secret에서 application.yml 내용을 가져와 파일로 생성
-      - name: Create application-test.yml
+      # 테스트를 위한 H2 DB 설정 파일을 생성
+      - name: Create application-test.yml for H2 database
         run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
+          mkdir -p src/test/resources
+          echo "spring:
+            datasource:
+              url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+              driver-class-name: org.h2.Driver
+              username: sa
+              password:
+            jpa:
+              hibernate:
+                ddl-auto: create-drop
+              properties:
+                hibernate:
+                  dialect: org.hibernate.dialect.H2Dialect
+          jwt:
+            secret: this-is-a-super-secret-key-for-ci-testing-12345" > src/test/resources/application-test.yml
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
@@ -56,5 +69,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # 2단계에서 저장한 SonarCloud 토큰
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # 이제 별도의 시스템 속성(-D) 없이 실행
-        run: ./gradlew build sonarqube --info
+        # 'test' 프로필을 활성화하여 application-test.yml을 사용
+        run: ./gradlew build sonarqube -Dspring.profiles.active=test --info
