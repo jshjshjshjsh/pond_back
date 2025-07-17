@@ -49,7 +49,7 @@ class MemberServiceTest {
         // - memberRepository.save가 호출되면, 인자로 받은 객체를 그대로 반환할 것이라고 가정
         Mockito.when(memberRepository.save(any(Member.class))).thenReturn(memberToRegister);
         // - 중복된 사번이 없다고 가정
-        Mockito.when(memberRepository.findMemberBySabun(any(String.class))).thenReturn(Optional.empty());
+        Mockito.when(memberRepository.findMemberByIdOrSabun(any(String.class), any(String.class))).thenReturn(Optional.empty());
 
 
         // when (실제 테스트 실행)
