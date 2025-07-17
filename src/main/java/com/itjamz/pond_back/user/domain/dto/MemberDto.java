@@ -4,10 +4,8 @@ import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.Member_Role;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 public class MemberDto {
 
