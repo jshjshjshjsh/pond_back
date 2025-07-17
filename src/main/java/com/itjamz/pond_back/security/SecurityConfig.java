@@ -12,6 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -29,7 +34,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
+                // 1. CORS 설정을 추가
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 2. CSRF는 Stateless 방식이므로 그대로 비활성화
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/team/leader/**").hasAnyRole("ADMIN", "LEADER") // 회원 전용 페이지
                         .requestMatchers("/team/**","/calendar/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // 회원 전용 페이지
@@ -42,4 +51,21 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    // CORS 정책을 설정하는 Bean을 추가
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // 여기에 프론트엔드 서버의 주소를 추가
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://your-frontend-domain.com"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true); // 인증 정보(쿠키 등)를 포함한 요청 허용
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 위 CORS 정책 적용
+        return source;
+    }
 }
+
