@@ -4,6 +4,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.3'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'java-library'
+	id "org.sonarqube" version "5.1.0.4882" // SonarQube 플러그인 추가
 }
 
 group = 'com.itjamz'
@@ -18,6 +19,15 @@ java {
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
+	}
+}
+
+// SonarQube(SonarCloud) 설정을 추가
+sonarqube {
+	properties {
+		property "sonar.projectKey", "jshjshjshjsh_pond_back" // SonarCloud 프로젝트 키
+		property "sonar.organization", "jshjshjshjsh"       // SonarCloud 조직 이름
+		property "sonar.host.url", "https://sonarcloud.io"
 	}
 }
 
