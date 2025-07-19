@@ -5,8 +5,8 @@ import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
 import com.itjamz.pond_back.calendar.repository.WorkHistoryRepository;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.Member_Role;
+import com.itjamz.pond_back.user.domain.entity.Team;
 import com.itjamz.pond_back.user.repository.TeamRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,11 +14,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class CalendarServiceTest {
@@ -72,5 +74,66 @@ class CalendarServiceTest {
 
     @Test
     void findWorkHistoryByDate() {
+        // LocalDate startDate, LocalDate endDate, Member member
+        // given
+        LocalDate startDate = LocalDate.of(2025, Month.APRIL, 5);
+        LocalDate endDate = LocalDate.of(2025, Month.APRIL, 23);
+
+        Member member = Member.builder()
+                .sabun("123456")
+                .id("tester")
+                .name("test")
+                .role(Member_Role.ROLE_LEADER)
+                .build();
+
+        Team team1 = Team.builder()
+                .teamName("TEAM1")
+                .build();
+
+        List<WorkHistory> workHistory = new ArrayList<>();
+        List<WorkHistoryDto> workHistoryDto = new ArrayList<>();
+
+        WorkHistory test1 = WorkHistory.builder()
+                .startDate(LocalDateTime.of(2025, Month.APRIL, 3, 0, 0, 0))
+                .endDate(LocalDateTime.of(2025, Month.APRIL, 8, 0, 0, 0))
+                .title("test1")
+                .member(member)
+                .team(team1)
+                .build();
+
+        WorkHistory test2 = WorkHistory.builder()
+                .startDate(LocalDateTime.of(2025, Month.APRIL, 10, 0, 0, 0))
+                .endDate(LocalDateTime.of(2025, Month.APRIL, 19, 0, 0, 0))
+                .title("test2")
+                .member(member)
+                .team(team1)
+                .build();
+
+        WorkHistory test3 = WorkHistory.builder()
+                .startDate(LocalDateTime.of(2025, Month.APRIL, 20, 0, 0, 0))
+                .endDate(LocalDateTime.of(2025, Month.MAY, 2, 0, 0, 0))
+                .title("test3")
+                .member(member)
+                .team(team1)
+                .build();
+
+
+        workHistory.add(test1);
+        workHistory.add(test2);
+        workHistory.add(test3);
+
+        workHistoryDto.add(WorkHistoryDto.from(test1));
+        workHistoryDto.add(WorkHistoryDto.from(test2));
+        workHistoryDto.add(WorkHistoryDto.from(test3));
+
+        Mockito.when(workHistoryRepository.findWorkHistoriesByBetweenSearchDate(startDate.atStartOfDay(), endDate.atStartOfDay(), member.getSabun())).thenReturn(workHistory);
+
+
+        // when
+        List<WorkHistoryDto> findWorkHistories = calendarService.findWorkHistoryByDate(startDate, endDate, member);
+
+        assertThat(findWorkHistories.get(0).getTitle()).isEqualTo(workHistoryDto.get(0).getTitle());
+        assertThat(findWorkHistories.get(1).getTitle()).isEqualTo(workHistoryDto.get(1).getTitle());
+        assertThat(findWorkHistories.get(2).getTitle()).isEqualTo(workHistoryDto.get(2).getTitle());
     }
 }
