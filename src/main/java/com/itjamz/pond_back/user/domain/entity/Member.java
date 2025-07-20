@@ -29,6 +29,7 @@ public class Member {
     private Member_Role role;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<MemberTeam> memberTeams = new ArrayList<>();
 
     public void encodedPw(String pw){
