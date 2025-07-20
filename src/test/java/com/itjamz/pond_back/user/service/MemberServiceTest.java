@@ -11,12 +11,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -31,10 +34,53 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
 
     @Test
+    @DisplayName("멤버 조회")
+    void findMemberById(){
+        // given
+        Member member = Member.builder()
+                .sabun("123456")
+                .id("tester")
+                .pw("pwtest") // 원본 비밀번호
+                .name("테스터")
+                .role(Member_Role.ROLE_NORMAL)
+                .build();
+        ReflectionTestUtils.setField(member,"pw","encoded_pwtest");
+
+        // when
+        when(memberRepository.findMemberById("tester")).thenReturn(Optional.of(member));
+        Optional<Member> findMember = memberService.findMemberById("tester");
+
+        // then
+        assertThat(findMember.get().getId()).isEqualTo(member.getId());
+        assertThat(findMember.get().getSabun()).isEqualTo(member.getSabun());
+        assertThat(findMember.get().getPw()).isEqualTo("encoded_pwtest");
+
+    }
+
+    @Test
+    @DisplayName("멤버 생성 실패 - 이미 존재하는 사번")
+    void memberRegisterFailExists(){
+        // given
+        Member member = Member.builder()
+                .sabun("123456")
+                .id("tester")
+                .pw("pwtest") // 원본 비밀번호
+                .name("테스터")
+                .role(Member_Role.ROLE_NORMAL)
+                .build();
+
+
+        // when
+        when(memberRepository.findMemberByIdOrSabun(any(String.class), any(String.class))).thenReturn(Optional.ofNullable(member));
+        assertThatThrownBy(() -> memberService.memberRegister(member))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("[회원가입 실패] 이미 존재하는 ID 또는 사번");
+    }
+
+    @Test
     @DisplayName("멤버 생성 성공")
     void memberRegisterSuccess() {
         // given (테스트 준비)
-        // 3. 서비스에 전달할 때는 '암호화되지 않은' 원본 비밀번호를 가진 객체를 준비합니다.
         Member memberToRegister = Member.builder()
                 .sabun("123456")
                 .id("tester")
@@ -45,11 +91,11 @@ class MemberServiceTest {
 
         // 4. Mock 객체들의 행동을 미리 정의해줍니다.
         // - "pwtest"가 암호화되면 "encoded_password"가 될 것이라고 가정
-        Mockito.when(passwordEncoder.encode("pwtest")).thenReturn("encoded_password");
+        when(passwordEncoder.encode("pwtest")).thenReturn("encoded_password");
         // - memberRepository.save가 호출되면, 인자로 받은 객체를 그대로 반환할 것이라고 가정
-        Mockito.when(memberRepository.save(any(Member.class))).thenReturn(memberToRegister);
+        when(memberRepository.save(any(Member.class))).thenReturn(memberToRegister);
         // - 중복된 사번이 없다고 가정
-        Mockito.when(memberRepository.findMemberByIdOrSabun(any(String.class), any(String.class))).thenReturn(Optional.empty());
+        when(memberRepository.findMemberByIdOrSabun(any(String.class), any(String.class))).thenReturn(Optional.empty());
 
 
         // when (실제 테스트 실행)
