@@ -1,5 +1,6 @@
 package com.itjamz.pond_back.security.controller;
 
+import com.itjamz.pond_back.AbstractContainerBaseTest;
 import com.itjamz.pond_back.security.service.UserDetailServiceImpl;
 import com.itjamz.pond_back.user.domain.entity.Member_Role;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AuthControllerTest {
+class AuthControllerTest extends AbstractContainerBaseTest {
 
     @Autowired
     private MockMvc mockMvc;
