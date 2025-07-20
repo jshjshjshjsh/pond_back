@@ -1,5 +1,6 @@
 package com.itjamz.pond_back.user.service;
 
+import com.itjamz.pond_back.k6.repository.MileageRepository;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.Member_Role;
 import com.itjamz.pond_back.user.repository.MemberRepository;
@@ -32,6 +33,9 @@ class MemberServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private MileageRepository mileageRepository;
 
     @Test
     @DisplayName("멤버 조회")
