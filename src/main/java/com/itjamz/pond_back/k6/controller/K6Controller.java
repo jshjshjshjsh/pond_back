@@ -16,12 +16,14 @@ public class K6Controller {
 
     @PostMapping("/deposit")
     public ResponseEntity<Long> mileageDeposit(@RequestBody Long amount, @AuthenticationPrincipal CustomUserDetails userDetails){
-        return ResponseEntity.ok(k6Service.mileageDeposit(userDetails.getMember().getId(), amount));
+        // 서비스의 depositWithLock 메서드를 호출하도록 변경
+        return ResponseEntity.ok(k6Service.depositWithLock(userDetails.getMember().getId(), amount));
     }
 
     @PostMapping("/withdraw")
     public ResponseEntity<Long> mileageWithdraw(@RequestBody Long amount, @AuthenticationPrincipal CustomUserDetails userDetails){
-        return ResponseEntity.ok(k6Service.mileageWithdraw(userDetails.getMember().getId(), amount));
+        // 서비스의 withdrawWithLock 메서드를 호출하도록 변경
+        return ResponseEntity.ok(k6Service.withdrawWithLock(userDetails.getMember().getId(), amount));
     }
 
     @GetMapping("/mileage")
