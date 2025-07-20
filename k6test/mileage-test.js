@@ -1,16 +1,47 @@
 import http from 'k6/http';
-import { check, sleep } from 'k6';
+import { check, sleep, group } from 'k6';
 
+// 테스트를 실행할 API 서버의 기본 URL
 const BASE_URL = 'http://localhost:8080';
-const TRANSACTION_AMOUNT = 100; // 입출금할 금액
-const INITIAL_BALANCE = 1000000; // 초기 잔액
 
-// 1. 테스트 실행 전 모든 VU가 공유할 단일 계정 생성 및 초기 잔액 설정
+// 테스트에 사용할 입출금 금액과 초기 잔액 설정
+const TRANSACTION_AMOUNT = 100;
+const INITIAL_BALANCE = 1000000;
+
+/**
+ * 1. Setup 단계 (테스트 실행 전 준비 과정)
+ */
 export function setup() {
-  // ... (이전 회원가입 및 로그인 코드는 동일) ...
-  const loginRes = http.post(`${BASE_URL}/login`, loginPayload, registerParams);
+  const uniqueId = `${__VU}_${new Date().getTime()}`;
+  const userId = `k6_user_${uniqueId}`;
+  const userSabun = `k6_sabun_${uniqueId}`;
+  const userPassword = 'password';
+
+  const registerPayload = JSON.stringify({
+    sabun: userSabun,
+    id: userId,
+    pw: userPassword,
+    name: 'K6 Concurrent User',
+    role: 'ROLE_NORMAL',
+  });
+
+  const requestParams = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  const registerRes = http.post(`${BASE_URL}/member/register`, registerPayload, requestParams);
+  check(registerRes, { 'SETUP: User registration successful': (r) => r.status === 200 });
+
+  const loginPayload = JSON.stringify({
+    id: userId,
+    pw: userPassword,
+  });
+
+  const loginRes = http.post(`${BASE_URL}/login`, loginPayload, requestParams);
   const accessToken = loginRes.json('accessToken');
-  check(loginRes, { 'setup: login successful': (r) => r.status === 200 && accessToken !== null });
+  check(loginRes, { 'SETUP: Login successful and got access token': (r) => r.status === 200 && accessToken !== null });
 
   const authHeaders = {
     headers: {
@@ -19,38 +50,40 @@ export function setup() {
     },
   };
 
-  // 초기 마일리지 설정
   const depositRes = http.post(`${BASE_URL}/k6/deposit`, JSON.stringify(INITIAL_BALANCE), authHeaders);
-
-  // 💥 수정된 부분: 응답 본문을 숫자로 변환
   const initialBalance = Number(depositRes.body);
+  check(depositRes, { 'SETUP: Initial deposit successful': (r) => r.status === 200 && !isNaN(initialBalance) });
 
-  check(depositRes, { 'setup: initial deposit successful': (r) => r.status === 200 && !isNaN(initialBalance) });
-
-  // 콘솔에 실제 받은 값을 로그로 남겨 디버깅을 쉽게 함
-  console.log(`[Setup] Server Response for initial balance: ${depositRes.body}`);
-  console.log(`[Setup] Account for 'concurrent_user' created with initial balance: ${initialBalance}`);
+  console.log(`[SETUP] Test account for '${userId}' created with initial balance: ${initialBalance}`);
 
   return { accessToken: accessToken, initialBalance: initialBalance };
 }
 
+/**
+ * 2. 시나리오 및 옵션 설정
+ */
 export const options = {
   scenarios: {
-    // 동시에 입금과 출금을 실행하는 시나리오
     deposit_and_withdraw_concurrently: {
       executor: 'ramping-vus',
       startVUs: 0,
       stages: [
-        { duration: '10s', target: 50 }, // 10초 동안 VU를 50명까지 늘림
-        { duration: '20s', target: 50 }, // 50명으로 20초간 유지
-        { duration: '5s', target: 0 },   // 5초 동안 VU를 0으로 줄임
+        { duration: '10s', target: 50 },
+        { duration: '20s', target: 50 },
+        { duration: '5s', target: 0 },
       ],
       gracefulRampDown: '5s',
     },
   },
+  thresholds: {
+    http_req_failed: ['rate<0.01'],
+    http_req_duration: ['p(95)<500'],
+  }
 };
 
-// 2. 모든 가상 사용자가 동시에 동일한 계정에 대해 입출금 실행
+/**
+ * 3. Main 단계 (수정된 실제 테스트 로직)
+ */
 export default function (data) {
   const authHeaders = {
     headers: {
@@ -59,21 +92,25 @@ export default function (data) {
     },
   };
 
-  // VU ID가 홀수이면 입금, 짝수이면 출금하여 총액 변동을 0으로 만듦
-  if (__VU % 2 === 0) {
-    const withdrawRes = http.post(`${BASE_URL}/k6/withdraw`, JSON.stringify(TRANSACTION_AMOUNT), authHeaders);
-    check(withdrawRes, {'withdraw successful': r => r.status === 200});
-  } else {
+  // ✅ 핵심 수정 사항: 각 VU가 입금과 출금을 한 번씩 모두 실행하도록 변경
+  // 이렇게 하면 모든 반복(iteration)은 잔액에 영향을 주지 않아(net-zero), 최종 잔액을 정확히 예측할 수 있습니다.
+  group('Deposit and Withdraw Transaction', function () {
     const depositRes = http.post(`${BASE_URL}/k6/deposit`, JSON.stringify(TRANSACTION_AMOUNT), authHeaders);
-    check(depositRes, {'deposit successful': r => r.status === 200});
-  }
-  sleep(0.5); // 짧은 대기 시간
+    check(depositRes, { 'Deposit successful': r => r.status === 200 });
+
+    const withdrawRes = http.post(`${BASE_URL}/k6/withdraw`, JSON.stringify(TRANSACTION_AMOUNT), authHeaders);
+    check(withdrawRes, { 'Withdraw successful': r => r.status === 200 });
+  });
+
+  sleep(0.5);
 }
 
-// 3. 테스트 종료 후 최종 상태 검증
+/**
+ * 4. Teardown 단계 (테스트 종료 후 정리 과정)
+ */
 export function teardown(data) {
   if (!data.accessToken) {
-    console.log('[Teardown] No access token, skipping final balance check.');
+    console.log('[TEARDOWN] No access token, skipping final balance check.');
     return;
   }
 
@@ -83,20 +120,16 @@ export function teardown(data) {
     },
   };
 
-  // 최종 잔액 조회
   const res = http.get(`${BASE_URL}/k6/mileage`, authHeaders);
-
-  // 💥 수정된 부분: 응답 본문을 숫자로 변환
   const finalBalance = Number(res.body);
 
   console.log(`
 --- Concurrency Test Verification ---`);
-  console.log(`Initial Balance: ${data.initialBalance}`);
-  console.log(`Final Balance  : ${finalBalance}`);
-  console.log(`Difference     : ${finalBalance - data.initialBalance}`);
+  console.log(`Initial Balance : ${data.initialBalance}`);
+  console.log(`Final Balance   : ${finalBalance}`);
+  console.log(`Difference      : ${finalBalance - data.initialBalance}`);
 
-  // 최종 잔액이 초기 잔액과 반드시 일치해야 함
   check(res, {
-    'Final balance must be correct': (r) => finalBalance === data.initialBalance,
+    'FINAL CHECK: Final balance must be correct': (r) => finalBalance === data.initialBalance,
   });
 }
