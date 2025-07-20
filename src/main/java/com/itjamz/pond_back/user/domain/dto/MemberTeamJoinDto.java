@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MemberTeamJoinDto {
 
+    @Builder.Default
     private List<String> memberSabun = new ArrayList<>();
     private Long teamId;
 }
