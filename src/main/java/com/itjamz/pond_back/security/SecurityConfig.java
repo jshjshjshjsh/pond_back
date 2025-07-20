@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/team/leader/**").hasAnyRole("ADMIN", "LEADER") // 회원 전용 페이지
                         .requestMatchers("/team/**","/calendar/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // 회원 전용 페이지
                         .requestMatchers("/","/login", "/login/refresh", "/member/register").permitAll() // 전체 허용 페이지
+                        .requestMatchers("/k6/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // K6 테스트 전용 페이지
                         .requestMatchers("/hello", "/test/**").permitAll() // 테스트용
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
