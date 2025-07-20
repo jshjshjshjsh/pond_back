@@ -1,6 +1,7 @@
 package com.itjamz.pond_back.common;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,7 +17,7 @@ public class ExceptionController {
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException e) {
         //return createErrorResponse(e);
-        return createErrorResponse(e, org.springframework.http.HttpStatus.BAD_REQUEST);
+        return createErrorResponse(e, e.getStatusCode());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -29,7 +30,7 @@ public class ExceptionController {
         return createErrorResponse(e, org.springframework.http.HttpStatus.CONFLICT);
     }
 
-    private ResponseEntity<Map<String, Object>> createErrorResponse(Exception e, org.springframework.http.HttpStatus status) {
+    private ResponseEntity<Map<String, Object>> createErrorResponse(Exception e, HttpStatusCode status) {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("status", status.value());
         errorResponse.put("message", e.getMessage());

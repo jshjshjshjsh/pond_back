@@ -80,4 +80,9 @@ public class JwtUtil {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+    // 테스트에서만 사용할 메서드
+    public String generateTokenForTest(String subject, long expireTime) {
+        return createToken(subject, expireTime);
+    }
 }
