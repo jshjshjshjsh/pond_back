@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -14,10 +15,10 @@ import java.lang.reflect.Method;
 @Component
 @Aspect
 @RequiredArgsConstructor
+@Order(1)
 public class DistributedLockAop {
 
     private final RedissonClient redissonClient;
-    private final AopForTransaction aopForTransaction;
 
     @Around("@annotation(com.itjamz.pond_back.aop.DistributedLock)")
     public Object lock(final ProceedingJoinPoint joinPoint) throws Throwable {
@@ -36,7 +37,7 @@ public class DistributedLockAop {
                 throw new IllegalStateException("락 획득에 실패했습니다.");
             }
             // 락을 획득한 상태에서 별도의 트랜잭션으로 원본 메서드를 호출
-            return aopForTransaction.proceed(joinPoint);
+            return joinPoint.proceed();
         } catch (InterruptedException e) {
             throw new InterruptedException("락 획득 중 인터럽트 발생");
         } finally {
