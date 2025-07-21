@@ -1,5 +1,6 @@
 package com.itjamz.pond_back.calendar.domain.entity;
 
+import com.itjamz.pond_back.calendar.domain.dto.WorkHistoryDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.Team;
 import jakarta.persistence.*;
@@ -29,6 +30,7 @@ public class WorkHistory {
     @NotNull
     private String title;
     private String content;
+    private Boolean isShare;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_sabun")
@@ -37,4 +39,21 @@ public class WorkHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_teamCode")
     private Team team;
+
+    public WorkHistory patchWorkHistory(WorkHistoryDto workHistoryDto, Team team){
+
+        if (workHistoryDto.getStartDate() != null)
+            this.startDate = workHistoryDto.getStartDate();
+        if (workHistoryDto.getEndDate() != null)
+            this.endDate = workHistoryDto.getEndDate();
+        if (workHistoryDto.getTitle() != null)
+            this.title = workHistoryDto.getTitle();
+        if (workHistoryDto.getContent() != null)
+            this.content = workHistoryDto.getContent();
+        if (workHistoryDto.getIsShare() != null)
+            this.isShare = workHistoryDto.getIsShare();
+        this.team = team;
+
+        return this;
+    }
 }
