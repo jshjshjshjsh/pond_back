@@ -1,5 +1,6 @@
 package com.itjamz.pond_back.k6.service;
 
+import com.itjamz.pond_back.aop.DistributedLock;
 import com.itjamz.pond_back.k6.domain.Mileage;
 import com.itjamz.pond_back.k6.repository.MileageRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,9 @@ public class K6Service {
     /**
      * 실제 입금 작업을 수행하는 트랜잭션 메서드
      */
+    @DistributedLock(key = "mileage_lock::id")
     @Transactional
-    public Long performDeposit(String id, Long amount) {
+    public Long deposit(String id, Long amount) {
         Mileage mileage = mileageRepository.findByMember_Id(id)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
         return mileage.deposit(amount);
@@ -25,8 +27,9 @@ public class K6Service {
     /**
      * 실제 출금 작업을 수행하는 트랜잭션 메서드
      */
+    @DistributedLock(key = "mileage_lock::id")
     @Transactional
-    public Long performWithdraw(String id, Long amount) {
+    public Long withdraw(String id, Long amount) {
         Mileage mileage = mileageRepository.findByMember_Id(id)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
         return mileage.withdraw(amount);
