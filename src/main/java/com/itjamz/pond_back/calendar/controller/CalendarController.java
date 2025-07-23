@@ -18,6 +18,21 @@ public class CalendarController {
 
     private final CalendarService calendarService;
 
+    @DeleteMapping("/workhistory/{id}")
+    public ResponseEntity<Void> deleteWorkHistory(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        calendarService.deleteWorkHistory(id, userDetails.getMember());
+
+        return ResponseEntity.ok().build();
+    }
+
+
+        @PatchMapping("/workhistory/{id}")
+    public ResponseEntity<Void> updateWorkHistory(@PathVariable Long id, @RequestBody WorkHistoryDto workHistoryDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        calendarService.updateWorkHistory(id, workHistoryDto, userDetails.getMember());
+
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/workhistory/save")
     public ResponseEntity<Void> saveWorkHistory(@RequestBody WorkHistoryDto workHistoryDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         calendarService.saveWorkHistory(workHistoryDto, userDetails.getMember());
