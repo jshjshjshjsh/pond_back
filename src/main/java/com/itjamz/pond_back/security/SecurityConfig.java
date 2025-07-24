@@ -1,5 +1,6 @@
 package com.itjamz.pond_back.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,11 +43,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/team/leader/**").hasAnyRole("ADMIN", "LEADER") // 회원 전용 페이지
                         .requestMatchers("/team/**","/calendar/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // 회원 전용 페이지
-                        .requestMatchers("/","/login", "/login/refresh", "/member/register").permitAll() // 전체 허용 페이지
+                        .requestMatchers("/","/login", "/login/refresh", "/logout", "/member/register").permitAll() // 전체 허용 페이지
                         .requestMatchers("/k6/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // K6 테스트 전용 페이지
                         .requestMatchers("/hello", "/test/**").permitAll() // 테스트용
                         .anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // 로그아웃을 처리할 URL을 지정
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
+                );
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

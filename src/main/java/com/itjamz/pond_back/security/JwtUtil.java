@@ -47,12 +47,18 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         try {
             return extractExpiration(token).before(new Date());
         } catch (Exception e) {
             return true;
         }
+    }
+
+    public Long getExpiration(String token) {
+        Date expiration = extractExpiration(token);
+        long now = new Date().getTime();
+        return (expiration.getTime() - now);
     }
 
     // 2. Access Token 생성 메서드
