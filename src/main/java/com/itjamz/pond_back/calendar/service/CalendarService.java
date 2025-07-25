@@ -61,7 +61,7 @@ public class CalendarService {
                 .content(workHistoryDto.getContent())
                 .startDate(workHistoryDto.getStartDate())
                 .endDate(workHistoryDto.getEndDate())
-                .isShare(false)
+                .isShare(workHistoryDto.getIsShare())
                 .member(member)
                 .team(team)
                 .build();

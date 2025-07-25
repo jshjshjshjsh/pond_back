@@ -2,10 +2,10 @@ package com.itjamz.pond_back.security.controller;
 
 import com.itjamz.pond_back.security.JwtUtil;
 import com.itjamz.pond_back.security.service.UserDetailServiceImpl;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -33,12 +34,13 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UserDetailServiceImpl userDetailService;
     private final RedisTemplate<String, String> redisTemplate;
+    private final Environment env;
 
-    // TODO:logout
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         // 1. 헤더에서 Access Token 추출
         final String authorizationHeader = request.getHeader("Authorization");
+        boolean isProduction = Arrays.asList(env.getActiveProfiles()).contains("prod");
         String accessToken = null;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             accessToken = authorizationHeader.substring(7);
@@ -53,7 +55,7 @@ public class AuthController {
         // 3. 클라이언트의 Refresh Token 쿠키 삭제
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(isProduction) // 👈 배포 환경(prod)일 때만 true로 설정
                 .path("/")
                 .maxAge(0) // 쿠키 즉시 만료
                 .build();
@@ -79,13 +81,15 @@ public class AuthController {
         final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
         // 2. Refresh Token을 HttpOnly 쿠키에 담아 설정
+        boolean isProduction = Arrays.asList(env.getActiveProfiles()).contains("prod");
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true) // HTTPS 환경에서만 전송
+                .secure(isProduction) // 👈 배포 환경(prod)일 때만 true로 설정
                 .path("/")
                 .maxAge(7L * 24 * 60 * 60) // 7일
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
 
         // 3. Access Token은 JSON 바디로 전달
         Map<String, String> responseBody = new HashMap<>();
