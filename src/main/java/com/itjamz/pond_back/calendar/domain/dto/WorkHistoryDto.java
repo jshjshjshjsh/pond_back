@@ -31,7 +31,7 @@ public class WorkHistoryDto {
         return WorkHistoryDto.builder()
                 .id(workHistory.getId())
                 .startDate(workHistory.getStartDate())
-                .endDate(workHistory.getStartDate())
+                .endDate(workHistory.getEndDate())
                 .title(workHistory.getTitle())
                 .content(workHistory.getContent())
                 .isShare(workHistory.getIsShare())
