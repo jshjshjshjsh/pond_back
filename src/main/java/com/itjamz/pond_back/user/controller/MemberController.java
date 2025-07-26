@@ -22,4 +22,7 @@ public class MemberController {
 
         return ResponseEntity.ok().build();
     }
+
+    // todo: 본인 정보 가져오는 api
+    // todo: role, 비밀번호 변경 api
 }

@@ -40,4 +40,5 @@ public class TeamController {
         return ResponseEntity.ok(teamService.getTeamMembersForUser(userDetails.getMember().getSabun()));
     }
 
+    // todo: leader의 경우 팀 목록을 가져오는 api 추가 필요
 }
