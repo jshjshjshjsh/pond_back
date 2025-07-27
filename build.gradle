@@ -61,6 +61,9 @@ dependencies {
 	implementation 'org.redisson:redisson-spring-boot-starter:3.27.2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// gemini ai
+	implementation 'com.google.genai:google-genai:1.0.0'
+
 	// 테스트를 위한 H2 데이터베이스 추가
 	testRuntimeOnly 'com.h2database:h2'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

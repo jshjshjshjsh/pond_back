@@ -26,7 +26,7 @@ public class CalendarController {
     }
 
 
-        @PatchMapping("/workhistory/{id}")
+    @PatchMapping("/workhistory/{id}")
     public ResponseEntity<Void> updateWorkHistory(@PathVariable Long id, @RequestBody WorkHistoryDto workHistoryDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         calendarService.updateWorkHistory(id, workHistoryDto, userDetails.getMember());
 
@@ -55,4 +55,7 @@ public class CalendarController {
 
         return ResponseEntity.ok(calendarService.findWorkHistoryByDate(startDate, endDate, userDetails.getMember()));
     }
+
+    // todo: 요약 공유 데이터 저장
+
 }

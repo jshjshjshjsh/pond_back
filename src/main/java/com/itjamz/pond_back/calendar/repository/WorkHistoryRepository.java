@@ -22,6 +22,7 @@ public interface WorkHistoryRepository extends JpaRepository<WorkHistory, Long> 
     @Query("SELECT DISTINCT wh FROM WorkHistory wh " +
             "WHERE wh.team IN (SELECT mt.team FROM MemberTeam mt WHERE mt.member.sabun = :memberSabun) " +
             "AND wh.endDate >= :startDate AND wh.startDate <= :endDate " +
-            "ORDER BY wh.startDate")
+            "ORDER BY wh.member.sabun, wh.startDate")
+    // todo: 팀 단위로 검색해야함
     List<WorkHistory> findWorkHistoriesByBetweenSearchDateAndMyTeams(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, @Param("memberSabun") String memberSabun);
 }
