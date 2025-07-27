@@ -4,6 +4,11 @@ import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.Member_Role;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.LazyInitializationException;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -14,13 +19,25 @@ public class MemberDto {
     private String pw;
     private String name;
     private Member_Role role;
+    private List<TeamDto> teams;
 
     public static MemberDto from(Member member) {
-        return MemberDto.builder()
+        MemberDtoBuilder builder = MemberDto.builder()
                 .sabun(member.getSabun())
                 .id(member.getId())
                 .name(member.getName())
-                .role(member.getRole())
-                .build();
+                .role(member.getRole());
+
+        try {
+            List<TeamDto> teamDtos = member.getMemberTeams().stream()
+                    .map(memberTeam -> TeamDto.from(memberTeam.getTeam()))
+                    .collect(Collectors.toList());
+            builder.teams(teamDtos);
+
+        } catch (LazyInitializationException e) {
+            builder.teams(Collections.emptyList());
+        }
+
+        return builder.build();
     }
 }

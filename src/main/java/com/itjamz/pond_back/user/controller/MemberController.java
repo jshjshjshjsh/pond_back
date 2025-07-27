@@ -1,13 +1,13 @@
 package com.itjamz.pond_back.user.controller;
 
+import com.itjamz.pond_back.security.domain.CustomUserDetails;
+import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +23,16 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    // todo: 본인 정보 가져오는 api
-    // todo: role, 비밀번호 변경 api
+    @GetMapping("/info")
+    public ResponseEntity<MemberDto> memberInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        return ResponseEntity.ok(MemberDto.from(userDetails.getMember()));
+    }
+
+    @PatchMapping("/info")
+    public ResponseEntity<Void> memberInfo(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MemberDto memberDto) {
+        memberService.memberChangeInfo(userDetails.getMember(), memberDto);
+
+        return ResponseEntity.ok().build();
+    }
 }

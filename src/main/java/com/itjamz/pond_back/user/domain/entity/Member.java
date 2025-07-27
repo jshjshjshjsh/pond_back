@@ -1,5 +1,6 @@
 package com.itjamz.pond_back.user.domain.entity;
 
+import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -34,5 +35,9 @@ public class Member {
 
     public void encodedPw(String pw){
         this.pw = pw;
+    }
+
+    public void changeInfo(MemberDto memberDto) {
+        this.role = memberDto.getRole();
     }
 }

@@ -3,6 +3,7 @@ package com.itjamz.pond_back.user.controller;
 import com.itjamz.pond_back.security.domain.CustomUserDetails;
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.dto.MemberTeamJoinDto;
+import com.itjamz.pond_back.user.domain.dto.TeamDto;
 import com.itjamz.pond_back.user.domain.entity.Team;
 import com.itjamz.pond_back.user.service.TeamService;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,11 @@ public class TeamController {
 
     private final TeamService teamService;
 
+    // todo: teamMember 삭제하는 기능 추가해야함
+
     @PostMapping("/leader/register")
-    public ResponseEntity<Void> teamRegister(@RequestBody Team team) {
-        teamService.teamRegister(team);
+    public ResponseEntity<Void> teamRegister(@RequestBody Team team, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        teamService.teamRegister(team, userDetails.getMember());
 
         return ResponseEntity.ok().build();
     }
@@ -40,5 +43,9 @@ public class TeamController {
         return ResponseEntity.ok(teamService.getTeamMembersForUser(userDetails.getMember().getSabun()));
     }
 
-    // todo: leader의 경우 팀 목록을 가져오는 api 추가 필요
+    @GetMapping("/leader/teams")
+    public ResponseEntity<List<Team>> getMyTeams(@AuthenticationPrincipal CustomUserDetails userDetails){
+
+        return ResponseEntity.ok(teamService.getTeams(userDetails.getMember()));
+    }
 }

@@ -16,7 +16,9 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     Optional<Member> findMemberBySabun(String sabun);
     Optional<Member> findMemberById(String id);
     Optional<Member> findMemberByIdOrSabun(String id, String sabun);
-    @Query("SELECT DISTINCT m FROM Member m JOIN m.memberTeams mt WHERE mt.team.id IN " +
-           "(SELECT mt2.team.id FROM MemberTeam mt2 WHERE mt2.member.sabun = :sabun)")
+    @Query("SELECT DISTINCT m FROM Member m " +
+            "JOIN FETCH m.memberTeams mt " +
+            "JOIN FETCH mt.team t " +
+            "WHERE t.id IN (SELECT mt2.team.id FROM MemberTeam mt2 WHERE mt2.member.sabun = :sabun)")
     List<Member> findTeamMembersByMemberSabun(@Param("sabun") String sabun);
 }
