@@ -17,5 +17,8 @@ spring:
         format_sql: true
     show-sql: true
 
+gemini:
+  api:
+    secret: api-test-code
 jwt:
   secret: this-is-a-very-very-long-and-secure-secret-key-for-testing-secret-key!
