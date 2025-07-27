@@ -3,6 +3,7 @@ package com.itjamz.pond_back.calendar.service;
 import com.itjamz.pond_back.calendar.domain.dto.WorkHistoryDto;
 import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
 import com.itjamz.pond_back.calendar.repository.WorkHistoryRepository;
+import com.itjamz.pond_back.calendar.repository.WorkSummaryRepository;
 import com.itjamz.pond_back.user.domain.dto.TeamDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.Member_Role;
@@ -33,6 +34,8 @@ class CalendarServiceTest {
     private TeamRepository teamRepository;
     @Mock
     private WorkHistoryRepository workHistoryRepository;
+    @Mock
+    private WorkSummaryRepository workSummaryRepository;
 
 
     @Test

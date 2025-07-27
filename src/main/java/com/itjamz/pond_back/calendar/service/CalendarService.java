@@ -3,6 +3,7 @@ package com.itjamz.pond_back.calendar.service;
 import com.itjamz.pond_back.calendar.domain.dto.WorkHistoryDto;
 import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
 import com.itjamz.pond_back.calendar.repository.WorkHistoryRepository;
+import com.itjamz.pond_back.calendar.repository.WorkSummaryRepository;
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.dto.TeamDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
@@ -25,6 +26,7 @@ public class CalendarService {
 
     private final TeamRepository teamRepository;
     private final WorkHistoryRepository workHistoryRepository;
+    private final WorkSummaryRepository workSummaryRepository;
 
     @Transactional
     public void deleteWorkHistory(Long id, Member member) {

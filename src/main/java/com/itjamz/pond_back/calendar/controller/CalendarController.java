@@ -56,6 +56,8 @@ public class CalendarController {
         return ResponseEntity.ok(calendarService.findWorkHistoryByDate(startDate, endDate, userDetails.getMember()));
     }
 
-    // todo: 요약 공유 데이터 저장
-
+    /**
+     * todo: 본인 요약 데이터 저장, 조회, 삭제, 수정(공유 유무)
+     * todo: 요약 데이터는 월별로 라벨을 넣고 공유하고 가져감
+     */
 }
