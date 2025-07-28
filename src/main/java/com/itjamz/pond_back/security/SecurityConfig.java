@@ -41,7 +41,7 @@ public class SecurityConfig {
                 // 2. CSRF는 Stateless 방식이므로 그대로 비활성화
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/team/leader/**").hasAnyRole("ADMIN", "LEADER") // 회원 전용 페이지
+                        .requestMatchers("/team/leader/**","/calendar/leader/**").hasAnyRole("ADMIN", "LEADER") // 회원 전용 페이지
                         .requestMatchers("/team/**","/calendar/**", "/ai/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // 회원 전용 페이지
                         .requestMatchers("/","/login", "/login/refresh", "/logout", "/member/register").permitAll() // 전체 허용 페이지
                         .requestMatchers("/k6/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // K6 테스트 전용 페이지

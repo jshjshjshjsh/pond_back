@@ -81,6 +81,19 @@ public class CalendarService {
         return workHistories.stream().map(WorkHistoryDto::from).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<WorkSummaryDto> findWorkSummaryPersonal(int year, int month, Member member){
+
+        List<WorkSummary> workSummaries = workSummaryRepository.findByYearAndMonthAndMember_Sabun(year, month, member.getSabun());
+        return workSummaries.stream().map(WorkSummaryDto::from).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<WorkSummaryDto> findTeamWorkSummary(int year, int month, Member member){
+
+        return null;
+    }
+
     @Transactional
     public WorkSummary saveWorkSummary(WorkSummaryDto workSummaryDto, Member member){
         WorkSummary workSummary = WorkSummary.builder()
