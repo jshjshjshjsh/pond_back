@@ -54,6 +54,7 @@ public class CalendarService {
         findWorkHistory.get().patchWorkHistory(workHistoryDto, team);
     }
 
+    @Transactional
     public WorkHistory saveWorkHistory(WorkHistoryDto workHistoryDto, Member member) {
         Team team = null;
         if (workHistoryDto.getTeam() != null && workHistoryDto.getTeam().getId() != null) {
@@ -74,11 +75,13 @@ public class CalendarService {
         return workHistoryRepository.save(workHistory);
     }
 
+    @Transactional(readOnly = true)
     public List<WorkHistoryDto> findWorkHistoryByDate(LocalDate startDate, LocalDate endDate, Member member) {
         List<WorkHistory> workHistories = workHistoryRepository.findWorkHistoriesByBetweenSearchDate(startDate.atStartOfDay(), endDate.atStartOfDay(), member.getSabun());
         return workHistories.stream().map(WorkHistoryDto::from).collect(Collectors.toList());
     }
 
+    @Transactional
     public WorkSummary saveWorkSummary(WorkSummaryDto workSummaryDto, Member member){
         WorkSummary workSummary = WorkSummary.builder()
                 .year(workSummaryDto.getYear())
@@ -91,6 +94,7 @@ public class CalendarService {
         return workSummaryRepository.save(workSummary);
     }
 
+    @Transactional
     public void deleteWorkSummary(Long id, Member member) {
         // 본인의 worksummary 인지 검증
         Optional<WorkSummary> workSummary = workSummaryRepository.findById(id);
@@ -100,13 +104,17 @@ public class CalendarService {
         workSummaryRepository.deleteById(id);
     }
 
+    @Transactional
     public WorkSummary updateWorkSummary(WorkSummaryDto workSummaryDto, Member member){
         // 현재는 share 값만 수정 가능
         Optional<WorkSummary> workSummary = workSummaryRepository.findById(workSummaryDto.getId());
         if ((workSummary.isPresent() && workSummary.get().getMember().getId().equals(member.getId())))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[worksummary 조회 실패] 조회 실패");
 
-        //workSummary.get().changeIsShare();
+        if (workSummaryDto.getIsShare() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[worksummary] 잘못된 요청");
+
+        workSummary.get().changeIsShare(workSummaryDto.getIsShare());
 
         return workSummary.get();
     }
