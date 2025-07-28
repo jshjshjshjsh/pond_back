@@ -1,7 +1,9 @@
 package com.itjamz.pond_back.calendar.service;
 
 import com.itjamz.pond_back.calendar.domain.dto.WorkHistoryDto;
+import com.itjamz.pond_back.calendar.domain.dto.WorkSummaryDto;
 import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
+import com.itjamz.pond_back.calendar.domain.entity.WorkSummary;
 import com.itjamz.pond_back.calendar.repository.WorkHistoryRepository;
 import com.itjamz.pond_back.calendar.repository.WorkSummaryRepository;
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
@@ -75,5 +77,37 @@ public class CalendarService {
     public List<WorkHistoryDto> findWorkHistoryByDate(LocalDate startDate, LocalDate endDate, Member member) {
         List<WorkHistory> workHistories = workHistoryRepository.findWorkHistoriesByBetweenSearchDate(startDate.atStartOfDay(), endDate.atStartOfDay(), member.getSabun());
         return workHistories.stream().map(WorkHistoryDto::from).collect(Collectors.toList());
+    }
+
+    public WorkSummary saveWorkSummary(WorkSummaryDto workSummaryDto, Member member){
+        WorkSummary workSummary = WorkSummary.builder()
+                .year(workSummaryDto.getYear())
+                .month(workSummaryDto.getMonth())
+                .isShare(workSummaryDto.getIsShare())
+                .summary(workSummaryDto.getSummary())
+                .member(member)
+                .build();
+
+        return workSummaryRepository.save(workSummary);
+    }
+
+    public void deleteWorkSummary(Long id, Member member) {
+        // 본인의 worksummary 인지 검증
+        Optional<WorkSummary> workSummary = workSummaryRepository.findById(id);
+        if ((workSummary.isPresent() && workSummary.get().getMember().getId().equals(member.getId())))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[worksummary 삭제 실패] 삭제 실패");
+
+        workSummaryRepository.deleteById(id);
+    }
+
+    public WorkSummary updateWorkSummary(WorkSummaryDto workSummaryDto, Member member){
+        // 현재는 share 값만 수정 가능
+        Optional<WorkSummary> workSummary = workSummaryRepository.findById(workSummaryDto.getId());
+        if ((workSummary.isPresent() && workSummary.get().getMember().getId().equals(member.getId())))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[worksummary 조회 실패] 조회 실패");
+
+        //workSummary.get().changeIsShare();
+
+        return workSummary.get();
     }
 }

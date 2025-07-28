@@ -1,6 +1,7 @@
 package com.itjamz.pond_back.calendar.controller;
 
 import com.itjamz.pond_back.calendar.domain.dto.WorkHistoryDto;
+import com.itjamz.pond_back.calendar.domain.dto.WorkSummaryDto;
 import com.itjamz.pond_back.calendar.service.CalendarService;
 import com.itjamz.pond_back.security.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +58,28 @@ public class CalendarController {
     }
 
     /**
-     * todo: 본인 요약 데이터 저장, 조회, 삭제, 수정(공유 유무)
+     * todo: 본인 요약 데이터 저장(o), 조회, 삭제(o), 수정(공유 유무)
      * todo: 요약 데이터는 월별로 라벨을 넣고 공유하고 가져감
      */
+
+    @PostMapping("/worksummary")
+    public ResponseEntity<Void> saveWorkSummary(@RequestBody WorkSummaryDto workSummaryDto, @AuthenticationPrincipal CustomUserDetails userDetails){
+        calendarService.saveWorkSummary(workSummaryDto, userDetails.getMember());
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/worksummary/{id}")
+    public ResponseEntity<Void> deleteWorkSummary(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        calendarService.deleteWorkSummary(id, userDetails.getMember());
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/worksummary")
+    public ResponseEntity<Void> updateWorkSummary(@RequestBody WorkSummaryDto workSummaryDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        calendarService.updateWorkSummary(workSummaryDto, userDetails.getMember());
+
+        return ResponseEntity.ok().build();
+    }
 }
