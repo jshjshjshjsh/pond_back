@@ -16,7 +16,7 @@ public class AiService {
     public String getSummaryFromGemini(String prompt) {
         Client client = Client.builder().apiKey(geminiApiKey).build();
 
-        prompt = "아래의 내용을 정리해서 나열해줘 \n" + prompt;
+        prompt = "아래의 내용을 분류하고 정리해서 나열해줘 \n" + prompt;
 
         GenerateContentResponse response =
                 client.models.generateContent(

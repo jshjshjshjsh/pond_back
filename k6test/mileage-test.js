@@ -92,8 +92,7 @@ export default function (data) {
     },
   };
 
-  // ✅ 핵심 수정 사항: 각 VU가 입금과 출금을 한 번씩 모두 실행하도록 변경
-  // 이렇게 하면 모든 반복(iteration)은 잔액에 영향을 주지 않아(net-zero), 최종 잔액을 정확히 예측할 수 있습니다.
+  // 이렇게 하면 모든 반복(iteration)은 잔액에 영향을 주지 않아(net-zero), 최종 잔액을 정확히 예측할 수 있음
   group('Deposit and Withdraw Transaction', function () {
     const depositRes = http.post(`${BASE_URL}/k6/deposit`, JSON.stringify(TRANSACTION_AMOUNT), authHeaders);
     check(depositRes, { 'Deposit successful': r => r.status === 200 });
@@ -123,8 +122,7 @@ export function teardown(data) {
   const res = http.get(`${BASE_URL}/k6/mileage`, authHeaders);
   const finalBalance = Number(res.body);
 
-  console.log(`
---- Concurrency Test Verification ---`);
+  console.log(`--- Concurrency Test Verification ---`);
   console.log(`Initial Balance : ${data.initialBalance}`);
   console.log(`Final Balance   : ${finalBalance}`);
   console.log(`Difference      : ${finalBalance - data.initialBalance}`);
