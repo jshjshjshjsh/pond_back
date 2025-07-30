@@ -91,7 +91,8 @@ public class CalendarService {
     @Transactional(readOnly = true)
     public List<WorkSummaryDto> findTeamWorkSummary(int year, int month, Member member){
 
-        return null;
+        List<WorkSummary> workSummaries = workSummaryRepository.findTeamWorkSummaryByYearAndMonth(year, month, member.getSabun());
+        return workSummaries.stream().map(WorkSummaryDto::from).collect(Collectors.toList());
     }
 
     @Transactional

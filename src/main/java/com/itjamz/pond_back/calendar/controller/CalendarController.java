@@ -58,17 +58,24 @@ public class CalendarController {
     }
 
     /**
-     * todo: 본인 요약 데이터 저장(o), 조회, 삭제(o), 수정(공유 유무)
-     * todo: 요약 데이터는 월별로 라벨을 넣고 공유하고 가져감
+     * 본인 요약 데이터 저장(o), 조회, 삭제(o), 수정(공유 유무)
+     * 요약 데이터는 월별로 라벨을 넣고 공유하고 가져감
+     * 조회는 본인의 월별을 조회하는 /calendar/worksummary/list
+     *       본인 팀원의 월별 조회인 /calendar/leader/worksummary/list 가 있음
      */
-    // todo: 조회는 본인의 월별을 조회하는 /calendar/worksummary/list
-    // todo: 본인 팀원의 월별 조회인 /calendar/leader/worksummary/list 가 있음
 
     @GetMapping("/worksummary/list")
     public ResponseEntity<List<WorkSummaryDto>> getMyWorkSummary(@RequestParam int year, @RequestParam int month,
                                                                  @AuthenticationPrincipal CustomUserDetails userDetails){
 
         return ResponseEntity.ok(calendarService.findWorkSummaryPersonal(year, month, userDetails.getMember()));
+    }
+
+    @GetMapping("/leader/worksummary/list")
+    public ResponseEntity<List<WorkSummaryDto>> getTeamWorkSummary(@RequestParam int year, @RequestParam int month,
+                                                                 @AuthenticationPrincipal CustomUserDetails userDetails){
+
+        return ResponseEntity.ok(calendarService.findTeamWorkSummary(year, month, userDetails.getMember()));
     }
 
     @PostMapping("/worksummary")
