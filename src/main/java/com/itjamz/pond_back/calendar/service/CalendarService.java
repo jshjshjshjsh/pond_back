@@ -112,7 +112,7 @@ public class CalendarService {
     public void deleteWorkSummary(Long id, Member member) {
         // 본인의 worksummary 인지 검증
         Optional<WorkSummary> workSummary = workSummaryRepository.findById(id);
-        if ((workSummary.isPresent() && workSummary.get().getMember().getId().equals(member.getId())))
+        if (!(workSummary.isPresent() && workSummary.get().getMember().getId().equals(member.getId())))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[worksummary 삭제 실패] 삭제 실패");
 
         workSummaryRepository.deleteById(id);
@@ -122,7 +122,7 @@ public class CalendarService {
     public WorkSummary updateWorkSummary(WorkSummaryDto workSummaryDto, Member member){
         // 현재는 share 값만 수정 가능
         Optional<WorkSummary> workSummary = workSummaryRepository.findById(workSummaryDto.getId());
-        if ((workSummary.isPresent() && workSummary.get().getMember().getId().equals(member.getId())))
+        if (!(workSummary.isPresent() && workSummary.get().getMember().getId().equals(member.getId())))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[worksummary 조회 실패] 조회 실패");
 
         if (workSummaryDto.getIsShare() == null)
