@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // 2. CSRF는 Stateless 방식이므로 그대로 비활성화
                 .csrf(csrf -> csrf.disable())
+                .logout(logout -> logout.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/team/leader/**","/calendar/leader/**").hasAnyRole("ADMIN", "LEADER") // 회원 전용 페이지
                         .requestMatchers("/team/**","/calendar/**", "/ai/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // 회원 전용 페이지
@@ -47,13 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/k6/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // K6 테스트 전용 페이지
                         .requestMatchers("/hello", "/test/**").permitAll() // 테스트용
                         .anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .logout(logout -> logout
-                        .logoutUrl("/logout") // 로그아웃을 처리할 URL을 지정
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(HttpServletResponse.SC_OK);
-                        })
-                );
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

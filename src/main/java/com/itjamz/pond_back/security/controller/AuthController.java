@@ -15,10 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
@@ -36,8 +33,9 @@ public class AuthController {
     private final RedisTemplate<String, String> redisTemplate;
     private final Environment env;
 
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("logout call");
         // 1. 헤더에서 Access Token 추출
         final String authorizationHeader = request.getHeader("Authorization");
         boolean isProduction = Arrays.asList(env.getActiveProfiles()).contains("prod");
