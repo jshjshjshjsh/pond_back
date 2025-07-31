@@ -61,7 +61,10 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 여기에 프론트엔드 서버의 주소를 추가
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173", "https://your-frontend-domain.com"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost", "http://localhost:3000",
+                "http://localhost:5173", "https://your-frontend-domain.com")
+        );
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true); // 인증 정보(쿠키 등)를 포함한 요청 허용
