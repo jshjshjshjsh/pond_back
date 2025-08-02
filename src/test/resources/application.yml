@@ -20,5 +20,14 @@ spring:
 gemini:
   api:
     secret: api-test-code
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://otel-collector.monitoring:4317
+
 jwt:
   secret: this-is-a-very-very-long-and-secure-secret-key-for-testing-secret-key!
