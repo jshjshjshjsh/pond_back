@@ -72,6 +72,11 @@ dependencies {
 	// 테스트를 위한 redis 주입
 	testImplementation "org.testcontainers:testcontainers:1.19.8"
 	testImplementation "org.testcontainers:junit-jupiter:1.19.8"
+
+	// 모니터링 활성화
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+	implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
 }
 
 tasks.withType(JavaCompile) {
