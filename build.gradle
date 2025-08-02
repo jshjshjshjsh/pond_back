@@ -20,7 +20,7 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
-	all {
+    configureEach {
 		exclude group: 'commons-logging', module: 'commons-logging'
 	}
 }
