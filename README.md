@@ -33,7 +33,11 @@ Pond는 매월 수행한 업무를 캘린더에 간편하게 기록하고, 팀 �
 
 
 ### 🛠️ 기술 스택 및 아키텍처
-Pond 백엔드는 클라우드 네이티브 환경에 최적화된 최신 기술 스택으로 구성되어 있습니다.
+Pond 백엔드는 아래와 같은 기술 스택으로 구성되어 있습니다.
+
+<img width="521" height="472" alt="스크린샷 2025-08-03 162317" src="https://github.com/user-attachments/assets/1b4c2830-11fe-4b29-abdf-b32287d3c95e" />
+
+<img width="479" height="152" alt="스크린샷 2025-07-29 212228" src="https://github.com/user-attachments/assets/86a771c6-fdda-4082-91e2-39a5ada53a49" />
 
 | 분야 | 기술 |
 | -------| ---------|
