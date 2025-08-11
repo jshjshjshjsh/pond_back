@@ -1,6 +1,7 @@
 package com.itjamz.pond_back.user.repository;
 
 import com.itjamz.pond_back.user.domain.entity.Member;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,8 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     Optional<Member> findMemberBySabun(String sabun);
     Optional<Member> findMemberById(String id);
     Optional<Member> findMemberByIdOrSabun(String id, String sabun);
+
+    @EntityGraph(attributePaths = {"memberTeams.team"})
     @Query("SELECT DISTINCT m FROM Member m " +
             "JOIN FETCH m.memberTeams mt " +
             "JOIN FETCH mt.team t " +

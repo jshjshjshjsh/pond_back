@@ -68,9 +68,10 @@ dependencies {
 	implementation 'com.google.genai:google-genai:1.0.0'
 
 	// 테스트를 위한 H2 데이터베이스 추가
-	testRuntimeOnly 'com.h2database:h2'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testImplementation 'com.h2database:h2'
+	runtimeOnly 'com.h2database:h2'
+	//testRuntimeOnly 'com.h2database:h2'
+	//testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	//testImplementation 'com.h2database:h2'
 
 	// 테스트를 위한 redis 주입
 	testImplementation "org.testcontainers:testcontainers:1.19.8"
