@@ -28,15 +28,10 @@ public class MemberDto {
                 .name(member.getName())
                 .role(member.getRole());
 
-        try {
-            List<TeamDto> teamDtos = member.getMemberTeams().stream()
-                    .map(memberTeam -> TeamDto.from(memberTeam.getTeam()))
-                    .collect(Collectors.toList());
-            builder.teams(teamDtos);
-
-        } catch (LazyInitializationException e) {
-            builder.teams(Collections.emptyList());
-        }
+        List<TeamDto> teamDtos = member.getMemberTeams().stream()
+                .map(memberTeam -> TeamDto.from(memberTeam.getTeam()))
+                .collect(Collectors.toList());
+        builder.teams(teamDtos);
 
         return builder.build();
     }
