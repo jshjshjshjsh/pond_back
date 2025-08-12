@@ -42,7 +42,7 @@ public class TeamService {
         sabun.add(member.getSabun());
 
         MemberTeamJoinDto memberTeamJoinDto = new MemberTeamJoinDto(sabun, savedTeam.getId());
-        joinTeam(memberTeamJoinDto);
+        this.joinTeam(memberTeamJoinDto);
 
         return savedTeam;
     }
@@ -52,13 +52,17 @@ public class TeamService {
         Team findTeam = teamRepository.findById(memberTeamJoinDto.getTeamId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "[팀 조인 실패] 존재하지 않는 팀 번호"));
 
-        List<MemberTeam> memberTeams = memberTeamJoinDto.getMemberSabun().stream()
-                .map(sabun -> {
-                    Member member = memberRepository.findMemberBySabun(sabun)
-                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "[팀 조인 실패] 존재하지 않는 사원 번호: " + sabun));
-                    
+        List<String> memberSabuns = memberTeamJoinDto.getMemberSabun();
+        List<Member> members = memberRepository.findBySabunIn(memberSabuns);
+
+        // 조회된 멤버 수가 요청된 사번 수와 다르면, 존재하지 않는 사번이 있다는 의미
+        if (members.size() != memberSabuns.size()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[팀 조인 실패] 존재하지 않는 사원이 포함되어 있습니다.");
+        }
+
+        List<MemberTeam> memberTeams = members.stream()
+                .map(member -> {
                     MemberTeamId memberTeamId = new MemberTeamId(member.getSabun(), findTeam.getId());
-                    
                     return MemberTeam.builder()
                             .id(memberTeamId)
                             .member(member)

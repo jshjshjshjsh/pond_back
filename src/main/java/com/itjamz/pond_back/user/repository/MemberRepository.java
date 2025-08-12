@@ -24,4 +24,5 @@ public interface MemberRepository extends JpaRepository<Member, String> {
             "JOIN FETCH mt.team t " +
             "WHERE t.id IN (SELECT mt2.team.id FROM MemberTeam mt2 WHERE mt2.member.sabun = :sabun)")
     List<Member> findTeamMembersByMemberSabun(@Param("sabun") String sabun);
+    List<Member> findBySabunIn(List<String> sabuns);
 }

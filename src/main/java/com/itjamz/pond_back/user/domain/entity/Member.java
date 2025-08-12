@@ -29,7 +29,7 @@ public class Member {
     @NotNull
     private Member_Role role;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<MemberTeam> memberTeams = new ArrayList<>();
 

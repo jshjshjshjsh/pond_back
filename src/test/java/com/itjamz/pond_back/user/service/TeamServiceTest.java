@@ -63,7 +63,7 @@ class TeamServiceTest {
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
 
         // 3. memberRepository.findMemberBySabun이 호출되면, Optional<Member>를 반환하도록 설정
-        when(memberRepository.findMemberBySabun("123456")).thenReturn(Optional.of(memberToRegister));
+        when(memberRepository.findBySabunIn(List.of("123456"))).thenReturn(List.of(memberToRegister));
         // --- ---
 
         // when
@@ -90,8 +90,7 @@ class TeamServiceTest {
 
         Member fakeMember1 = Member.builder().sabun("123456").build();
         Member fakeMember2 = Member.builder().sabun("123457").build();
-        when(memberRepository.findMemberBySabun("123456")).thenReturn(Optional.of(fakeMember1));
-        when(memberRepository.findMemberBySabun("123457")).thenReturn(Optional.of(fakeMember2));
+        when(memberRepository.findBySabunIn(List.of("123456", "123457"))).thenReturn(List.of(fakeMember1, fakeMember2));
 
         // saveAll이 호출되면, 인자로 받은 리스트를 그대로 반환하도록 설정
         // (실제로는 저장 로직 후의 객체를 반환하므로, 여기서는 간단하게 anyList()를 사용)
@@ -144,12 +143,12 @@ class TeamServiceTest {
 
         Team fakeTeam = Team.builder().id(1L).teamName("Test Team").build();
 
-        when(memberRepository.findMemberBySabun("123456")).thenReturn(Optional.empty());
+        when(memberRepository.findBySabunIn(List.of("123456", "123457"))).thenReturn(List.of());
         when(teamRepository.findById(1L)).thenReturn(Optional.of(fakeTeam));
 
         // when & then
         assertThatThrownBy(() -> teamService.joinTeam(memberTeamJoinDto))
                 .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("[팀 조인 실패] 존재하지 않는 사원 번호");
+                .hasMessageContaining("[팀 조인 실패] 존재하지 않는 사원");
     }
 }
