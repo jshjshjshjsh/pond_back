@@ -1,6 +1,7 @@
 package com.itjamz.pond_back.user.service;
 
 import com.itjamz.pond_back.k6.repository.MileageRepository;
+import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.Member_Role;
 import com.itjamz.pond_back.user.repository.MemberRepository;
@@ -37,17 +38,61 @@ class MemberServiceTest {
     @Mock
     private MileageRepository mileageRepository;
 
-    @Test
-    @DisplayName("멤버 조회")
-    void findMemberById(){
-        // given
-        Member member = Member.builder()
+    private Member generateMember(){
+        return Member.builder()
                 .sabun("123456")
                 .id("tester")
                 .pw("pwtest") // 원본 비밀번호
                 .name("테스터")
                 .role(Member_Role.ROLE_NORMAL)
                 .build();
+    }
+
+    @Test
+    @DisplayName("멤버 비밀번호 변경 실패 - 존재하지 않는 사번")
+    void memberChangeInfoFail(){
+        // given
+        Member member = this.generateMember();
+        MemberDto memberDto = MemberDto.builder()
+                .pw("changePw")
+                .role(Member_Role.ROLE_LEADER)
+                .build();
+
+        // when
+        when(memberRepository.findMemberBySabun(member.getSabun())).thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> memberService.memberChangeInfo(member, memberDto))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("[계정 조회 실패] 존재하지 않는 ID 또는 사번");
+
+    }
+
+    @Test
+    @DisplayName("멤버 신분, 비밀번호 변경")
+    void memberChangeInfo() {
+        // given
+        Member member = this.generateMember();
+        MemberDto memberDto = MemberDto.builder()
+                .pw("changePw")
+                .role(Member_Role.ROLE_LEADER)
+                .build();
+        when(memberRepository.findMemberBySabun(member.getSabun())).thenReturn(Optional.of(member));
+
+        // when
+        Member changedMember = memberService.memberChangeInfo(member, memberDto);
+
+        // then
+        assertThat(changedMember.getSabun()).isEqualTo(member.getSabun());
+        assertThat(passwordEncoder.encode(changedMember.getPw())).isEqualTo(member.getPw());
+        assertThat(changedMember.getRole()).isEqualTo(Member_Role.ROLE_LEADER);
+    }
+
+    @Test
+    @DisplayName("멤버 조회")
+    void findMemberById(){
+        // given
+        Member member = this.generateMember();
         ReflectionTestUtils.setField(member,"pw","encoded_pwtest");
 
         // when
@@ -65,13 +110,7 @@ class MemberServiceTest {
     @DisplayName("멤버 생성 실패 - 이미 존재하는 사번")
     void memberRegisterFailExists(){
         // given
-        Member member = Member.builder()
-                .sabun("123456")
-                .id("tester")
-                .pw("pwtest") // 원본 비밀번호
-                .name("테스터")
-                .role(Member_Role.ROLE_NORMAL)
-                .build();
+        Member member = this.generateMember();
 
 
         // when
@@ -85,25 +124,19 @@ class MemberServiceTest {
     @DisplayName("멤버 생성 성공")
     void memberRegisterSuccess() {
         // given (테스트 준비)
-        Member memberToRegister = Member.builder()
-                .sabun("123456")
-                .id("tester")
-                .pw("pwtest") // 원본 비밀번호
-                .name("테스터")
-                .role(Member_Role.ROLE_NORMAL)
-                .build();
+        Member member = this.generateMember();
 
         // 4. Mock 객체들의 행동을 미리 정의해줍니다.
         // - "pwtest"가 암호화되면 "encoded_password"가 될 것이라고 가정
         when(passwordEncoder.encode("pwtest")).thenReturn("encoded_password");
         // - memberRepository.save가 호출되면, 인자로 받은 객체를 그대로 반환할 것이라고 가정
-        when(memberRepository.save(any(Member.class))).thenReturn(memberToRegister);
+        when(memberRepository.save(any(Member.class))).thenReturn(member);
         // - 중복된 사번이 없다고 가정
         when(memberRepository.findMemberByIdOrSabun(any(String.class), any(String.class))).thenReturn(Optional.empty());
 
 
         // when (실제 테스트 실행)
-        Member registeredMember = memberService.memberRegister(memberToRegister);
+        Member registeredMember = memberService.memberRegister(member);
 
 
         // then (결과 검증)
