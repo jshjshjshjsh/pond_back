@@ -23,7 +23,7 @@ public class MemberService {
     private final MileageRepository mileageRepository;
 
     @Transactional
-    public void memberChangeInfo(Member member, MemberDto memberDto) {
+    public Member memberChangeInfo(Member member, MemberDto memberDto) {
         Optional<Member> findMember = memberRepository.findMemberBySabun(member.getSabun());
         if (findMember.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "[계정 조회 실패] 존재하지 않는 ID 또는 사번");
@@ -32,6 +32,8 @@ public class MemberService {
         if (memberDto.getPw() != null)
             findMember.get().encodedPw(passwordEncoder.encode(memberDto.getPw()));
         findMember.get().changeInfo(memberDto);
+
+        return findMember.get();
     }
 
     @Transactional

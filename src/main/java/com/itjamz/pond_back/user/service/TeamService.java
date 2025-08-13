@@ -75,11 +75,6 @@ public class TeamService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Team> findTeamById(Long teamId){
-        return teamRepository.findById(teamId);
-    }
-
-    @Transactional(readOnly = true)
     public List<MemberDto> getTeamMembersForUser(String sabun) {
         List<Member> members = memberRepository.findTeamMembersByMemberSabun(sabun);
         return members.stream()

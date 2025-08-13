@@ -35,7 +35,6 @@ public class AuthController {
 
     @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("logout call");
         // 1. 헤더에서 Access Token 추출
         final String authorizationHeader = request.getHeader("Authorization");
         boolean isProduction = Arrays.asList(env.getActiveProfiles()).contains("prod");
@@ -48,6 +47,11 @@ public class AuthController {
             // 2. Access Token을 블랙리스트에 추가
             Long expiration = jwtUtil.getExpiration(accessToken);
             redisTemplate.opsForValue().set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+
+            String username = jwtUtil.extractUsername(accessToken);
+
+            String refreshTokenKey = "RT:" + username;
+            redisTemplate.delete(refreshTokenKey);
         }
 
         // 3. 클라이언트의 Refresh Token 쿠키 삭제
@@ -77,6 +81,9 @@ public class AuthController {
         // 1. Access Token과 Refresh Token 생성
         final String accessToken = jwtUtil.generateAccessToken(userDetails);
         final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+
+        String redisKey = "RT:" + userDetails.getUsername();
+        redisTemplate.opsForValue().set(redisKey, refreshToken, 7, TimeUnit.DAYS);
 
         // 2. Refresh Token을 HttpOnly 쿠키에 담아 설정
         boolean isProduction = Arrays.asList(env.getActiveProfiles()).contains("prod");

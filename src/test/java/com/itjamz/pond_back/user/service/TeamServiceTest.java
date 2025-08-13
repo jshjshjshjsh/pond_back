@@ -1,5 +1,6 @@
 package com.itjamz.pond_back.user.service;
 
+import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.dto.MemberTeamJoinDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberTeam;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,21 +39,90 @@ class TeamServiceTest {
     @Mock
     private MemberTeamRepository memberTeamRepository;
 
+    private MemberTeamJoinDto generateMemberTeamJoinDto() {
+        return MemberTeamJoinDto.builder()
+                .teamId(1L)
+                .memberSabun(List.of("123456", "123457"))
+                .build();
+    }
+
+    private Team generateTeam(String teamName){
+        return Team.builder()
+                .id(1L)
+                .teamName(teamName)
+                .build();
+    }
+
+    private Member generateMember(String sabun, String id, String pw, String name){
+        return Member.builder()
+                .sabun(sabun)
+                .id(id)
+                .pw(pw)
+                .name(name)
+                .role(Member_Role.ROLE_NORMAL)
+                .build();
+    }
+
+    @Test
+    @DisplayName("본인의 팀들 전부 가져오기")
+    void getTeams(){
+        // given
+        Team team1 = this.generateTeam("testTeam1");
+        Team team2 = this.generateTeam("testTeam2");
+        Member member = this.generateMember("123456", "tester1", "pwtest", "테스터1");
+
+
+        // when
+        when(teamRepository.findTeamsByMemberSabun("123456")).thenReturn(List.of(team1, team2));
+        List<Team> findTeams = teamService.getTeams(member);
+
+        // then
+        assertThat(findTeams).hasSize(2);
+        assertThat(findTeams.get(0).getTeamName()).isEqualTo(team1.getTeamName());
+        assertThat(findTeams.get(1).getTeamName()).isEqualTo(team2.getTeamName());
+    }
+
+    @Test
+    @DisplayName("본인 소속된 팀의 유저정보 가져오기")
+    void getTeamMembersForUser(){
+        // given
+        Member member1 = this.generateMember("123456", "tester1", "pwtest", "테스터1");
+        Member member2 = this.generateMember("123457", "tester2", "pwtest", "테스터2");
+
+        // when
+        when(memberRepository.findTeamMembersByMemberSabun("123456")).thenReturn(List.of(member1, member2));
+        List<MemberDto> members = teamService.getTeamMembersForUser("123456");
+
+        // then
+        assertThat(members).hasSize(2);
+        assertThat(members.get(0).getSabun()).isEqualTo("123456");
+        assertThat(members.get(1).getSabun()).isEqualTo("123457");
+
+    }
+
+    @Test
+    @DisplayName("팀 생성 실패 - 이미 존재하는 팀명")
+    void teamRegisterFail(){
+        // given
+        Team team = this.generateTeam("testTeam1");
+        Member member = this.generateMember("123456", "tester", "pwtest", "테스터");
+
+        // when
+        when(teamRepository.findTeamByTeamName(team.getTeamName())).thenReturn(Optional.of(team));
+
+        // then
+        assertThatThrownBy(() -> teamService.teamRegister(team, member))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("[팀 등록 실패] 이미 존재하는 팀");
+    }
+
     @Test
     @DisplayName("팀 생성 성공")
     void teamRegisterSuccess(){
 
         // given
-        Team team = Team.builder()
-                .teamName("testTeam1")
-                .build();
-        Member memberToRegister = Member.builder()
-                .sabun("123456")
-                .id("tester")
-                .pw("pwtest")
-                .name("테스터")
-                .role(Member_Role.ROLE_NORMAL)
-                .build();
+        Team team = this.generateTeam("testTeam1");
+        Member member = this.generateMember("123456", "tester", "pwtest", "테스터");
 
         ReflectionTestUtils.setField(team, "id", 1L);
 
@@ -63,11 +134,11 @@ class TeamServiceTest {
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
 
         // 3. memberRepository.findMemberBySabun이 호출되면, Optional<Member>를 반환하도록 설정
-        when(memberRepository.findBySabunIn(List.of("123456"))).thenReturn(List.of(memberToRegister));
+        when(memberRepository.findBySabunIn(List.of("123456"))).thenReturn(List.of(member));
         // --- ---
 
         // when
-        Team teamRegister = teamService.teamRegister(team, memberToRegister);
+        Team teamRegister = teamService.teamRegister(team, member);
 
         // then
         assertThat(teamRegister.getId()).isEqualTo(1L);
@@ -79,18 +150,15 @@ class TeamServiceTest {
     void teamJoinSuccess() {
         // given (준비)
         // 1. 테스트에 사용할 DTO 생성
-        MemberTeamJoinDto memberTeamJoinDto = MemberTeamJoinDto.builder()
-                .teamId(1L)
-                .memberSabun(List.of("123456", "123457"))
-                .build();
+        MemberTeamJoinDto memberTeamJoinDto = this.generateMemberTeamJoinDto();
 
         // 2. Mock 객체들의 행동을 미리 정의 (Stubbing)
-        Team fakeTeam = Team.builder().id(1L).teamName("Test Team").build();
-        when(teamRepository.findById(1L)).thenReturn(Optional.of(fakeTeam));
+        Team team = this.generateTeam("testTeam1");
+        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
 
-        Member fakeMember1 = Member.builder().sabun("123456").build();
-        Member fakeMember2 = Member.builder().sabun("123457").build();
-        when(memberRepository.findBySabunIn(List.of("123456", "123457"))).thenReturn(List.of(fakeMember1, fakeMember2));
+        Member member1 = this.generateMember("123456", "tester1", "pwtest", "테스터1");
+        Member member2 = this.generateMember("123457", "tester2", "pwtest", "테스터2");
+        when(memberRepository.findBySabunIn(List.of("123456", "123457"))).thenReturn(List.of(member1, member2));
 
         // saveAll이 호출되면, 인자로 받은 리스트를 그대로 반환하도록 설정
         // (실제로는 저장 로직 후의 객체를 반환하므로, 여기서는 간단하게 anyList()를 사용)
@@ -118,12 +186,9 @@ class TeamServiceTest {
     void teamJoinNotExistsTeam(){
 
         // given
-        MemberTeamJoinDto memberTeamJoinDto = MemberTeamJoinDto.builder()
-                .teamId(-1L)
-                .memberSabun(List.of("123456", "123457"))
-                .build();
+        MemberTeamJoinDto memberTeamJoinDto = this.generateMemberTeamJoinDto();
 
-        when(teamRepository.findById(-1L)).thenReturn(Optional.empty());
+        when(teamRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> teamService.joinTeam(memberTeamJoinDto))
@@ -136,15 +201,11 @@ class TeamServiceTest {
     void teamJoinNotExistsSabun(){
 
         // given
-        MemberTeamJoinDto memberTeamJoinDto = MemberTeamJoinDto.builder()
-                .teamId(1L)
-                .memberSabun(List.of("123456", "123457"))
-                .build();
-
-        Team fakeTeam = Team.builder().id(1L).teamName("Test Team").build();
+        MemberTeamJoinDto memberTeamJoinDto = this.generateMemberTeamJoinDto();
+        Team team = this.generateTeam("testTeam1");
 
         when(memberRepository.findBySabunIn(List.of("123456", "123457"))).thenReturn(List.of());
-        when(teamRepository.findById(1L)).thenReturn(Optional.of(fakeTeam));
+        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
 
         // when & then
         assertThatThrownBy(() -> teamService.joinTeam(memberTeamJoinDto))
