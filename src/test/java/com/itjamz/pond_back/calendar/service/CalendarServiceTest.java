@@ -1,7 +1,9 @@
 package com.itjamz.pond_back.calendar.service;
 
 import com.itjamz.pond_back.calendar.domain.dto.WorkHistoryDto;
+import com.itjamz.pond_back.calendar.domain.dto.WorkSummaryDto;
 import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
+import com.itjamz.pond_back.calendar.domain.entity.WorkSummary;
 import com.itjamz.pond_back.calendar.repository.WorkHistoryRepository;
 import com.itjamz.pond_back.calendar.repository.WorkSummaryRepository;
 import com.itjamz.pond_back.user.domain.dto.TeamDto;
@@ -16,14 +18,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CalendarServiceTest {
@@ -38,6 +45,164 @@ class CalendarServiceTest {
     private WorkSummaryRepository workSummaryRepository;
 
 
+    @Test
+    @DisplayName("WorkHistory 수정 성공")
+    void updateWorkHistorySuccess() {
+        // given
+        Long workHistoryId = 1L;
+        Member member = Member.builder().id("tester").sabun("123456").build();
+        WorkHistoryDto updateDto = WorkHistoryDto.builder().title("수정된 제목").content("수정된 내용").build();
+        WorkHistory existingWorkHistory = WorkHistory.builder().id(workHistoryId).member(member).title("원본 제목").build();
+
+        when(workHistoryRepository.findById(workHistoryId)).thenReturn(Optional.of(existingWorkHistory));
+
+        // when
+        calendarService.updateWorkHistory(workHistoryId, updateDto, member);
+
+        // then
+        assertThat(existingWorkHistory.getTitle()).isEqualTo("수정된 제목");
+        assertThat(existingWorkHistory.getContent()).isEqualTo("수정된 내용");
+    }
+
+    @Test
+    @DisplayName("WorkHistory 수정 실패 - 존재하지 않는 ID")
+    void updateWorkHistoryFail_NotFound() {
+        // given
+        Long workHistoryId = 99L;
+        Member member = Member.builder().id("tester").sabun("123456").build();
+        WorkHistoryDto updateDto = WorkHistoryDto.builder().title("수정된 제목").build();
+
+        when(workHistoryRepository.findById(workHistoryId)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> calendarService.updateWorkHistory(workHistoryId, updateDto, member))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("[workhistory 조회 실패]");
+    }
+
+    @Test
+    @DisplayName("WorkHistory 삭제 성공")
+    void deleteWorkHistorySuccess() {
+        // given
+        Long workHistoryId = 1L;
+        Member member = Member.builder().id("tester").sabun("123456").build();
+        WorkHistory existingWorkHistory = WorkHistory.builder().id(workHistoryId).member(member).build();
+
+        when(workHistoryRepository.findById(workHistoryId)).thenReturn(Optional.of(existingWorkHistory));
+        // delete 메서드는 반환값이 없으므로, 호출되는 것만 검증하면 됨
+        doNothing().when(workHistoryRepository).delete(existingWorkHistory);
+
+        // when
+        calendarService.deleteWorkHistory(workHistoryId, member);
+
+        // then
+        // workHistoryRepository.delete 메서드가 인자값(existingWorkHistory)으로 1번 호출되었는지 검증
+        verify(workHistoryRepository, times(1)).delete(existingWorkHistory);
+    }
+
+    @Test
+    @DisplayName("개인 WorkSummary 조회 성공")
+    void findWorkSummaryPersonalSuccess() {
+        // given
+        int year = 2025;
+        int month = 8;
+        Member member = Member.builder().sabun("123456").build();
+        WorkSummary summary = WorkSummary.builder().id(1L).year(year).month(month).member(member).build();
+
+        when(workSummaryRepository.findByYearAndMonthAndMember_Sabun(year, month, member.getSabun()))
+                .thenReturn(List.of(summary));
+
+        // when
+        List<WorkSummaryDto> result = calendarService.findWorkSummaryPersonal(year, month, member);
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("팀 WorkSummary 조회 성공")
+    void findTeamWorkSummarySuccess() {
+        // given
+        int year = 2025;
+        int month = 8;
+        Member member = Member.builder().sabun("123456").build();
+        WorkSummary summary = WorkSummary.builder().id(1L).year(year).month(month).member(member).build();
+
+        when(workSummaryRepository.findTeamWorkSummaryByYearAndMonth(year, month, member.getSabun()))
+                .thenReturn(List.of(summary));
+
+        // when
+        List<WorkSummaryDto> result = calendarService.findTeamWorkSummary(year, month, member);
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(1L);
+    }
+
+
+    @Test
+    @DisplayName("WorkSummary 저장 성공")
+    void saveWorkSummarySuccess() {
+        // given
+        Member member = Member.builder().sabun("123456").build();
+        WorkSummaryDto dto = WorkSummaryDto.builder()
+                .year(2025).month(8).summary("테스트 요약").isShare(true).build();
+
+        WorkSummary summaryToSave = WorkSummary.builder()
+                .year(dto.getYear())
+                .month(dto.getMonth())
+                .summary(dto.getSummary())
+                .isShare(dto.getIsShare())
+                .member(member)
+                .build();
+
+        // save 메서드가 호출되면 저장된 객체(ID가 부여된)를 반환하도록 설정
+        when(workSummaryRepository.save(any(WorkSummary.class))).thenReturn(summaryToSave);
+
+        // when
+        WorkSummary savedSummary = calendarService.saveWorkSummary(dto, member);
+
+        // then
+        assertThat(savedSummary.getSummary()).isEqualTo("테스트 요약");
+        assertThat(savedSummary.getMember().getSabun()).isEqualTo("123456");
+    }
+
+    @Test
+    @DisplayName("WorkSummary 삭제 성공")
+    void deleteWorkSummarySuccess() {
+        // given
+        Long summaryId = 1L;
+        Member member = Member.builder().id("tester").build();
+        WorkSummary existingSummary = WorkSummary.builder().id(summaryId).member(member).build();
+
+        when(workSummaryRepository.findById(summaryId)).thenReturn(Optional.of(existingSummary));
+        doNothing().when(workSummaryRepository).deleteById(summaryId);
+
+        // when
+        calendarService.deleteWorkSummary(summaryId, member);
+
+        // then
+        verify(workSummaryRepository, times(1)).deleteById(summaryId);
+    }
+
+    @Test
+    @DisplayName("WorkSummary 공유 여부 수정 성공")
+    void updateWorkSummarySuccess() {
+        // given
+        Long summaryId = 1L;
+        Member member = Member.builder().id("tester").build();
+        WorkSummaryDto dto = WorkSummaryDto.builder().id(summaryId).isShare(false).build();
+        WorkSummary existingSummary = WorkSummary.builder().id(summaryId).member(member).isShare(true).build();
+
+        when(workSummaryRepository.findById(summaryId)).thenReturn(Optional.of(existingSummary));
+
+        // when
+        WorkSummary updatedSummary = calendarService.updateWorkSummary(dto, member);
+
+        // then
+        assertThat(updatedSummary.getIsShare()).isFalse();
+    }
     @Test
     @DisplayName("WorkHistory 팀 포함 저장 시나리오")
     void workHistorySaveWithTeam(){
@@ -69,7 +234,7 @@ class CalendarServiceTest {
                 .team(Team.builder().id(1L).teamName("TEAM1").build())
                 .build();
 
-        Mockito.when(workHistoryRepository.save(Mockito.any(WorkHistory.class))).thenReturn(workHistoryRegister);
+        when(workHistoryRepository.save(Mockito.any(WorkHistory.class))).thenReturn(workHistoryRegister);
         WorkHistory savedWorkHistory = calendarService.saveWorkHistory(workHistoryDto, member);
 
 
@@ -110,7 +275,7 @@ class CalendarServiceTest {
                 .member(member)
                 .build();
 
-        Mockito.when(workHistoryRepository.save(Mockito.any(WorkHistory.class))).thenReturn(workHistoryRegister);
+        when(workHistoryRepository.save(Mockito.any(WorkHistory.class))).thenReturn(workHistoryRegister);
         WorkHistory savedWorkHistory = calendarService.saveWorkHistory(workHistoryDto, member);
 
 
@@ -177,7 +342,7 @@ class CalendarServiceTest {
         workHistoryDto.add(WorkHistoryDto.from(test2));
         workHistoryDto.add(WorkHistoryDto.from(test3));
 
-        Mockito.when(workHistoryRepository.findWorkHistoriesByBetweenSearchDate(startDate.atStartOfDay(), endDate.atStartOfDay(), member.getSabun())).thenReturn(workHistory);
+        when(workHistoryRepository.findWorkHistoriesByBetweenSearchDate(startDate.atStartOfDay(), endDate.atStartOfDay(), member.getSabun())).thenReturn(workHistory);
 
 
         // when
