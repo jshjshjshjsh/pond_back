@@ -3,12 +3,13 @@
 name: SonarCloud Analysis
 
 on:
-  push:
-    branches:
-      - main # main 브랜치에 push 될 때 실행
-  pull_request:
-    branches:
-      - main # main 브랜치로 향하는 Pull Request가 생성/업데이트 될 때 실행
+  workflow_dispatch:
+  #push:
+  #  branches:
+  #    - main # main 브랜치에 push 될 때 실행
+  #pull_request:
+  #  branches:
+  #    - main # main 브랜치로 향하는 Pull Request가 생성/업데이트 될 때 실행
 
 jobs:
   build:
