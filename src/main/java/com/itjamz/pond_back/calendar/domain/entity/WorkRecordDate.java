@@ -21,15 +21,13 @@ public class WorkRecordDate {
 
     @Builder
     public WorkRecordDate(LocalDateTime startDate, LocalDateTime endDate) {
-        // TODO: valid 추가
+        if (startDate == null || endDate == null) {
+            throw new IllegalArgumentException("시작일과 종료일은 필수입니다.");
+        }
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("종료일이 시작일보다 빠를 수 없습니다."); // 도메인 규칙!
+        }
         this.startDate = startDate;
         this.endDate = endDate;
-    }
-
-    public void updateWorkRecordDate(LocalDateTime startDate, LocalDateTime endDate){
-        if (startDate != null)
-            this.startDate = startDate;
-        if (endDate != null)
-            this.endDate = endDate;
     }
 }

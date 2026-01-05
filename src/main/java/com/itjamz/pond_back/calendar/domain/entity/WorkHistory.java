@@ -40,11 +40,12 @@ public class WorkHistory implements Work{
     private Team team;
 
     public WorkHistory patchWorkHistory(WorkHistoryDto workHistoryDto, Team team){
-        if (workRecordDate == null)
-            workRecordDate = new WorkRecordDate();
+        if (workHistoryDto.getStartDate() != null || workHistoryDto.getEndDate() != null) {
+            LocalDateTime newStart = workHistoryDto.getStartDate() != null ? workHistoryDto.getStartDate() : this.workRecordDate.getStartDate();
+            LocalDateTime newEnd = workHistoryDto.getEndDate() != null ? workHistoryDto.getEndDate() : this.workRecordDate.getEndDate();
 
-        workRecordDate.updateWorkRecordDate(workHistoryDto.getStartDate(), workHistoryDto.getEndDate());
-
+            this.workRecordDate = new WorkRecordDate(newStart, newEnd);
+        }
         if (workHistoryDto.getTitle() != null)
             this.title = workHistoryDto.getTitle();
         if (workHistoryDto.getContent() != null)
