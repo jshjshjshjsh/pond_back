@@ -20,8 +20,8 @@ public class Member {
     @NotNull
     @Column(unique = true)
     private String id;
-    @NotNull
-    private String pw;
+    @Embedded
+    private MemberPw pw;
     @NotNull
     private String name;
     @Enumerated(EnumType.STRING)
@@ -34,7 +34,7 @@ public class Member {
     private List<MemberTeam> memberTeams = new ArrayList<>();
 
     public void encodedPw(String pw){
-        this.pw = pw;
+        this.pw = new MemberPw(pw);
     }
 
     public void changeInfo(MemberDto memberDto) {

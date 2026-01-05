@@ -40,6 +40,8 @@ public class WorkHistory implements Work{
     private Team team;
 
     public WorkHistory patchWorkHistory(WorkHistoryDto workHistoryDto, Team team){
+        if (workRecordDate == null)
+            workRecordDate = new WorkRecordDate();
 
         workRecordDate.updateWorkRecordDate(workHistoryDto.getStartDate(), workHistoryDto.getEndDate());
 

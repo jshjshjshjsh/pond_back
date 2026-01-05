@@ -2,11 +2,7 @@ package com.itjamz.pond_back.calendar.repository;
 
 import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
 import com.itjamz.pond_back.calendar.domain.entity.WorkRecordDate;
-import com.itjamz.pond_back.user.domain.entity.Member;
-import com.itjamz.pond_back.user.domain.entity.MemberTeam;
-import com.itjamz.pond_back.user.domain.entity.MemberRole;
-import com.itjamz.pond_back.user.domain.entity.Team;
-import com.itjamz.pond_back.user.domain.entity.MemberTeamId;
+import com.itjamz.pond_back.user.domain.entity.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -36,7 +32,7 @@ class WorkHistoryRepositoryTest {
         Member member = Member.builder()
                 .sabun("123456")
                 .id("tester")
-                .pw("pw")
+                .pw(new MemberPw("pwpwpw"))
                 .name("test")
                 .role(MemberRole.ROLE_LEADER)
                 .build();
@@ -117,7 +113,7 @@ class WorkHistoryRepositoryTest {
         Member member1 = Member.builder()
                 .sabun("123456")
                 .id("tester1")
-                .pw("pw")
+                .pw(new MemberPw("pwpwpw"))
                 .name("test1")
                 .role(MemberRole.ROLE_LEADER)
                 .build();
@@ -125,7 +121,7 @@ class WorkHistoryRepositoryTest {
         Member member2 = Member.builder()
                 .sabun("123457")
                 .id("tester2")
-                .pw("pw")
+                .pw(new MemberPw("pwpwpw"))
                 .name("test2")
                 .role(MemberRole.ROLE_NORMAL)
                 .build();

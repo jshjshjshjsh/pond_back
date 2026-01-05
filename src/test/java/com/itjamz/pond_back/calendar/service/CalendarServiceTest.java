@@ -52,7 +52,7 @@ class CalendarServiceTest {
         // given
         Long workHistoryId = 1L;
         Member member = Member.builder().id("tester").sabun("123456").build();
-        WorkHistoryDto updateDto = WorkHistoryDto.builder().title("수정된 제목").content("수정된 내용").build();
+        WorkHistoryDto updateDto = WorkHistoryDto.builder().title("수정된 제목").content("수정된 내용").startDate(LocalDateTime.now()).endDate(LocalDateTime.now()).build();
         WorkHistory existingWorkHistory = WorkHistory.builder().id(workHistoryId).member(member).title("원본 제목").build();
 
         when(workHistoryRepository.findById(workHistoryId)).thenReturn(Optional.of(existingWorkHistory));

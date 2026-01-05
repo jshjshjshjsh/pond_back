@@ -1,6 +1,7 @@
 package com.itjamz.pond_back.user.repository;
 
 import com.itjamz.pond_back.user.domain.entity.Member;
+import com.itjamz.pond_back.user.domain.entity.MemberPw;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class MemberRepositoryTest {
                 .builder()
                 .sabun("123456")
                 .id("tester")
-                .pw(passwordEncoder.encode("pwtest"))
+                .pw(new MemberPw(passwordEncoder.encode("pwtest")))
                 .name("테스터").build();
 
         // when
@@ -59,7 +60,7 @@ class MemberRepositoryTest {
                 .builder()
                 .sabun("123456")
                 .id("tester")
-                .pw(passwordEncoder.encode("pwtest"))
+                .pw(new MemberPw(passwordEncoder.encode("pwtest")))
                 .build();
 
         // when & then

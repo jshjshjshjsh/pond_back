@@ -2,6 +2,7 @@ package com.itjamz.pond_back.security.service;
 
 import com.itjamz.pond_back.security.domain.CustomUserDetails;
 import com.itjamz.pond_back.user.domain.entity.Member;
+import com.itjamz.pond_back.user.domain.entity.MemberPw;
 import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import com.itjamz.pond_back.user.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +35,7 @@ class UserDetailServiceImplTest {
         // given
         Member mockMember = Member.builder()
                 .id("testuser")
-                .pw("encoded_password")
+                .pw(new MemberPw("encoded_password"))
                 .role(MemberRole.ROLE_NORMAL)
                 .build();
         when(memberService.findMemberById("testuser")).thenReturn(Optional.of(mockMember));

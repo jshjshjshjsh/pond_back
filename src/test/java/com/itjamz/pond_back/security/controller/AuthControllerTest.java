@@ -3,6 +3,7 @@ package com.itjamz.pond_back.security.controller;
 import com.itjamz.pond_back.global.config.TestRedisConfig; // <--- 1. 임포트 확인
 import com.itjamz.pond_back.security.JwtUtil;
 import com.itjamz.pond_back.user.domain.entity.Member;
+import com.itjamz.pond_back.user.domain.entity.MemberPw;
 import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import com.itjamz.pond_back.user.repository.MemberRepository;
 import com.jayway.jsonpath.JsonPath;
@@ -65,7 +66,7 @@ class AuthControllerTest { // extends 제거된 것 유지
                 .id("testuser")
                 .sabun("12345")
                 .name("test")
-                .pw(passwordEncoder.encode("password"))
+                .pw(new MemberPw(passwordEncoder.encode("password")))
                 .role(MemberRole.ROLE_NORMAL)
                 .build();
         memberRepository.save(testUser);

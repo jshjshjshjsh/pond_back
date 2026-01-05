@@ -42,7 +42,7 @@ public class MemberService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "[회원가입 실패] 이미 존재하는 ID 또는 사번");
         }
 
-        String encodedPw = passwordEncoder.encode(member.getPw());
+        String encodedPw = passwordEncoder.encode(member.getPw().getPw());
         member.encodedPw(encodedPw);
 
         Member savedMember = memberRepository.save(member);
