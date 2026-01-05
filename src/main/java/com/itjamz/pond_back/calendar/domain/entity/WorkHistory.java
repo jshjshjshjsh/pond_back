@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkHistory {
+public class WorkHistory implements Work{
 
 
     @Id @GeneratedValue

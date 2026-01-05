@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkSummary {
+public class WorkSummary implements Work{
 
     @Id @GeneratedValue
     private Long id;
