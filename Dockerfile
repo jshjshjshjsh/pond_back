@@ -5,7 +5,7 @@ COPY --chown=gradle:gradle src build.gradle settings.gradle . .
 RUN gradle build --no-daemon -x test
 
 # Package stage
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 COPY --from=build /home/gradle/project/build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
