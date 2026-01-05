@@ -4,6 +4,7 @@ import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +34,9 @@ public class Member {
     @Builder.Default
     private List<MemberTeam> memberTeams = new ArrayList<>();
 
-    public void encodedPw(String pw){
+    public void encodedPw(String pw, PasswordEncoder encoder){
         this.pw = new MemberPw(pw);
+        this.pw.encodingPw(encoder);
     }
 
     public void changeInfo(MemberDto memberDto) {

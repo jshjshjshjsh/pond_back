@@ -129,7 +129,7 @@ class MemberServiceTest {
 
         // 4. Mock 객체들의 행동을 미리 정의해줍니다.
         // - "pwtest"가 암호화되면 "encoded_password"가 될 것이라고 가정
-        when(passwordEncoder.encode("pwtest")).thenReturn("encoded_password");
+        when(passwordEncoder.encode(any())).thenReturn("encoded_password");
         // - memberRepository.save가 호출되면, 인자로 받은 객체를 그대로 반환할 것이라고 가정
         when(memberRepository.save(any(Member.class))).thenReturn(member);
         // - 중복된 사번이 없다고 가정

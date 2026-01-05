@@ -25,6 +25,10 @@ public class MemberPw {
         this.pw = pw;
     }
 
+    public void encodingPw(PasswordEncoder encoder){
+        this.pw = encoder.encode(this.pw);
+    }
+
     public boolean match(String rawPassword, PasswordEncoder encoder) {
         return encoder.matches(rawPassword, this.pw);
     }
