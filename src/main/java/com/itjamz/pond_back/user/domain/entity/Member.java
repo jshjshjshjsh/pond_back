@@ -34,9 +34,9 @@ public class Member {
     @Builder.Default
     private List<MemberTeam> memberTeams = new ArrayList<>();
 
-    public void encodedPw(String pw, PasswordEncoder encoder){
-        this.pw = new MemberPw(pw);
-        this.pw.encodingPw(encoder);
+    public void encodedPw(String rawPw, PasswordEncoder encoder){
+        MemberPw rawMemberPw = new MemberPw(rawPw);
+        this.pw = rawMemberPw.encodingPw(encoder);
     }
 
     public void changeInfo(MemberDto memberDto) {
