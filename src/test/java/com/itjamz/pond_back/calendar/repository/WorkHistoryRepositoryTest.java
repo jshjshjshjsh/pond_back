@@ -1,9 +1,10 @@
 package com.itjamz.pond_back.calendar.repository;
 
 import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
+import com.itjamz.pond_back.calendar.domain.entity.WorkRecordDate;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberTeam;
-import com.itjamz.pond_back.user.domain.entity.Member_Role;
+import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import com.itjamz.pond_back.user.domain.entity.Team;
 import com.itjamz.pond_back.user.domain.entity.MemberTeamId;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ class WorkHistoryRepositoryTest {
                 .id("tester")
                 .pw("pw")
                 .name("test")
-                .role(Member_Role.ROLE_LEADER)
+                .role(MemberRole.ROLE_LEADER)
                 .build();
 
         Team team1 = Team.builder()
@@ -45,32 +46,48 @@ class WorkHistoryRepositoryTest {
                 .build();
 
         WorkHistory test1 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 1, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.APRIL, 2, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 1, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.APRIL, 2, 0, 0, 0))
+                                .build()
+                )
                 .title("test1")
                 .member(member)
                 .team(team1)
                 .build();
 
         WorkHistory test2 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 3, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.APRIL, 8, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 3, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.APRIL, 8, 0, 0, 0))
+                                .build()
+                )
                 .title("test2")
                 .member(member)
                 .team(team1)
                 .build();
 
         WorkHistory test3 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 10, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.APRIL, 19, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 10, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.APRIL, 19, 0, 0, 0))
+                                .build()
+                )
                 .title("test3")
                 .member(member)
                 .team(team1)
                 .build();
 
         WorkHistory test4 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 20, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.MAY, 2, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 20, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.MAY, 2, 0, 0, 0))
+                                .build()
+                )
                 .title("test4")
                 .member(member)
                 .team(team1)
@@ -102,7 +119,7 @@ class WorkHistoryRepositoryTest {
                 .id("tester1")
                 .pw("pw")
                 .name("test1")
-                .role(Member_Role.ROLE_LEADER)
+                .role(MemberRole.ROLE_LEADER)
                 .build();
 
         Member member2 = Member.builder()
@@ -110,7 +127,7 @@ class WorkHistoryRepositoryTest {
                 .id("tester2")
                 .pw("pw")
                 .name("test2")
-                .role(Member_Role.ROLE_NORMAL)
+                .role(MemberRole.ROLE_NORMAL)
                 .build();
 
         Team team1 = Team.builder()
@@ -139,32 +156,48 @@ class WorkHistoryRepositoryTest {
         entityManager.persistAndFlush(memberTeam2);
 
         WorkHistory test1 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 1, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.APRIL, 2, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 1, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.APRIL, 2, 0, 0, 0))
+                                .build()
+                )
                 .title("test1")
                 .member(member1)
                 .team(team)
                 .build();
 
         WorkHistory test2 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 3, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.APRIL, 8, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 3, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.APRIL, 8, 0, 0, 0))
+                                .build()
+                )
                 .title("test2")
                 .member(member1)
                 .team(team)
                 .build();
 
         WorkHistory test3 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 10, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.APRIL, 19, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 10, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.APRIL, 19, 0, 0, 0))
+                                .build()
+                )
                 .title("test3")
                 .member(member2)
                 .team(team)
                 .build();
 
         WorkHistory test4 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 20, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.MAY, 2, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 20, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.MAY, 2, 0, 0, 0))
+                                .build()
+                )
                 .title("test4")
                 .member(member2)
                 .team(team)

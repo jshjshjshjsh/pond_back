@@ -7,7 +7,7 @@ import com.itjamz.pond_back.calendar.service.CalendarService;
 import com.itjamz.pond_back.security.JwtUtil;
 import com.itjamz.pond_back.security.domain.CustomUserDetails;
 import com.itjamz.pond_back.user.domain.entity.Member;
-import com.itjamz.pond_back.user.domain.entity.Member_Role;
+import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ class CalendarControllerUnitTest {
                 .id("testuser")
                 .sabun("12345")
                 .name("test")
-                .role(Member_Role.ROLE_NORMAL)
+                .role(MemberRole.ROLE_NORMAL)
                 .build();
         customUserDetails = new CustomUserDetails(member);
 

@@ -4,7 +4,7 @@ import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.dto.MemberTeamJoinDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberTeam;
-import com.itjamz.pond_back.user.domain.entity.Member_Role;
+import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import com.itjamz.pond_back.user.domain.entity.Team;
 import com.itjamz.pond_back.user.repository.MemberRepository;
 import com.itjamz.pond_back.user.repository.MemberTeamRepository;
@@ -59,7 +59,7 @@ class TeamServiceTest {
                 .id(id)
                 .pw(pw)
                 .name(name)
-                .role(Member_Role.ROLE_NORMAL)
+                .role(MemberRole.ROLE_NORMAL)
                 .build();
     }
 

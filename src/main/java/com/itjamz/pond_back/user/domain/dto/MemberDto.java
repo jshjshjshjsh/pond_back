@@ -1,12 +1,10 @@
 package com.itjamz.pond_back.user.domain.dto;
 
 import com.itjamz.pond_back.user.domain.entity.Member;
-import com.itjamz.pond_back.user.domain.entity.Member_Role;
+import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import lombok.Builder;
 import lombok.Getter;
-import org.hibernate.LazyInitializationException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +16,7 @@ public class MemberDto {
     private String id;
     private String pw;
     private String name;
-    private Member_Role role;
+    private MemberRole role;
     private List<TeamDto> teams;
 
     public static MemberDto from(Member member) {

@@ -23,10 +23,9 @@ public class WorkHistory implements Work{
     @Id @GeneratedValue
     private Long id;
 
-    @NotNull
-    private LocalDateTime startDate;
-    @NotNull
-    private LocalDateTime endDate;
+    @Embedded
+    WorkRecordDate workRecordDate;
+
     @NotNull
     private String title;
     private String content;
@@ -42,10 +41,8 @@ public class WorkHistory implements Work{
 
     public WorkHistory patchWorkHistory(WorkHistoryDto workHistoryDto, Team team){
 
-        if (workHistoryDto.getStartDate() != null)
-            this.startDate = workHistoryDto.getStartDate();
-        if (workHistoryDto.getEndDate() != null)
-            this.endDate = workHistoryDto.getEndDate();
+        workRecordDate.updateWorkRecordDate(workHistoryDto.getStartDate(), workHistoryDto.getEndDate());
+
         if (workHistoryDto.getTitle() != null)
             this.title = workHistoryDto.getTitle();
         if (workHistoryDto.getContent() != null)

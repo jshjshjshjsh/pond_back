@@ -27,7 +27,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Column(length = 15)
     @NotNull
-    private Member_Role role;
+    private MemberRole role;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default

@@ -4,6 +4,7 @@ import com.itjamz.pond_back.calendar.domain.dto.WorkHistoryDto;
 import com.itjamz.pond_back.calendar.domain.dto.WorkSummaryDto;
 import com.itjamz.pond_back.calendar.domain.entity.Work;
 import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
+import com.itjamz.pond_back.calendar.domain.entity.WorkRecordDate;
 import com.itjamz.pond_back.calendar.domain.entity.WorkSummary;
 import com.itjamz.pond_back.calendar.repository.WorkHistoryRepository;
 import com.itjamz.pond_back.calendar.repository.WorkSummaryRepository;
@@ -63,8 +64,12 @@ public class CalendarService {
         WorkHistory workHistory = WorkHistory.builder()
                 .title(workHistoryDto.getTitle())
                 .content(workHistoryDto.getContent())
-                .startDate(workHistoryDto.getStartDate())
-                .endDate(workHistoryDto.getEndDate())
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(workHistoryDto.getStartDate())
+                                .endDate(workHistoryDto.getEndDate())
+                                .build()
+                )
                 .isShare(workHistoryDto.getIsShare())
                 .member(member)
                 .team(team)
