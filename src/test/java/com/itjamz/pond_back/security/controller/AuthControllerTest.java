@@ -3,7 +3,8 @@ package com.itjamz.pond_back.security.controller;
 import com.itjamz.pond_back.global.config.TestRedisConfig; // <--- 1. 임포트 확인
 import com.itjamz.pond_back.security.JwtUtil;
 import com.itjamz.pond_back.user.domain.entity.Member;
-import com.itjamz.pond_back.user.domain.entity.Member_Role;
+import com.itjamz.pond_back.user.domain.entity.MemberPw;
+import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import com.itjamz.pond_back.user.repository.MemberRepository;
 import com.jayway.jsonpath.JsonPath;
 import jakarta.servlet.http.Cookie;
@@ -28,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;          // <--- 추가
 import static org.mockito.BDDMockito.given;              // <--- 추가
-import static org.mockito.Mockito.doNothing;             // <--- 추가
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -66,8 +66,8 @@ class AuthControllerTest { // extends 제거된 것 유지
                 .id("testuser")
                 .sabun("12345")
                 .name("test")
-                .pw(passwordEncoder.encode("password"))
-                .role(Member_Role.ROLE_NORMAL)
+                .pw(new MemberPw(passwordEncoder.encode("password")))
+                .role(MemberRole.ROLE_NORMAL)
                 .build();
         memberRepository.save(testUser);
 

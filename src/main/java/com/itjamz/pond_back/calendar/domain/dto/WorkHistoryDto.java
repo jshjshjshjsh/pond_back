@@ -30,8 +30,8 @@ public class WorkHistoryDto {
     public static WorkHistoryDto from(WorkHistory workHistory) {
         return WorkHistoryDto.builder()
                 .id(workHistory.getId())
-                .startDate(workHistory.getStartDate())
-                .endDate(workHistory.getEndDate())
+                .startDate(workHistory.getWorkRecordDate().getStartDate())
+                .endDate(workHistory.getWorkRecordDate().getEndDate())
                 .title(workHistory.getTitle())
                 .content(workHistory.getContent())
                 .isShare(workHistory.getIsShare())

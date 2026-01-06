@@ -17,16 +17,15 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkHistory {
+public class WorkHistory implements Work{
 
 
     @Id @GeneratedValue
     private Long id;
 
-    @NotNull
-    private LocalDateTime startDate;
-    @NotNull
-    private LocalDateTime endDate;
+    @Embedded
+    WorkRecordDate workRecordDate;
+
     @NotNull
     private String title;
     private String content;
@@ -41,11 +40,12 @@ public class WorkHistory {
     private Team team;
 
     public WorkHistory patchWorkHistory(WorkHistoryDto workHistoryDto, Team team){
+        if (workHistoryDto.getStartDate() != null || workHistoryDto.getEndDate() != null) {
+            LocalDateTime newStart = workHistoryDto.getStartDate() != null ? workHistoryDto.getStartDate() : this.workRecordDate.getStartDate();
+            LocalDateTime newEnd = workHistoryDto.getEndDate() != null ? workHistoryDto.getEndDate() : this.workRecordDate.getEndDate();
 
-        if (workHistoryDto.getStartDate() != null)
-            this.startDate = workHistoryDto.getStartDate();
-        if (workHistoryDto.getEndDate() != null)
-            this.endDate = workHistoryDto.getEndDate();
+            this.workRecordDate = new WorkRecordDate(newStart, newEnd);
+        }
         if (workHistoryDto.getTitle() != null)
             this.title = workHistoryDto.getTitle();
         if (workHistoryDto.getContent() != null)

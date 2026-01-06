@@ -4,6 +4,7 @@ import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,21 +21,22 @@ public class Member {
     @NotNull
     @Column(unique = true)
     private String id;
-    @NotNull
-    private String pw;
+    @Embedded
+    private MemberPw pw;
     @NotNull
     private String name;
     @Enumerated(EnumType.STRING)
     @Column(length = 15)
     @NotNull
-    private Member_Role role;
+    private MemberRole role;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<MemberTeam> memberTeams = new ArrayList<>();
 
-    public void encodedPw(String pw){
-        this.pw = pw;
+    public void encodedPw(String rawPw, PasswordEncoder encoder){
+        MemberPw rawMemberPw = new MemberPw(rawPw);
+        this.pw = rawMemberPw.encodingPw(encoder);
     }
 
     public void changeInfo(MemberDto memberDto) {

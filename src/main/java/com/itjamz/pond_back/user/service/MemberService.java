@@ -30,7 +30,7 @@ public class MemberService {
         }
 
         if (memberDto.getPw() != null)
-            findMember.get().encodedPw(passwordEncoder.encode(memberDto.getPw()));
+            findMember.get().encodedPw(memberDto.getPw(), passwordEncoder);
         findMember.get().changeInfo(memberDto);
 
         return findMember.get();
@@ -42,8 +42,7 @@ public class MemberService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "[회원가입 실패] 이미 존재하는 ID 또는 사번");
         }
 
-        String encodedPw = passwordEncoder.encode(member.getPw());
-        member.encodedPw(encodedPw);
+        member.encodedPw(member.getPw().getPw(), passwordEncoder);
 
         Member savedMember = memberRepository.save(member);
 

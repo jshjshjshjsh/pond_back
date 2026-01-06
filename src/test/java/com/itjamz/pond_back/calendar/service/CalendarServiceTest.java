@@ -3,12 +3,13 @@ package com.itjamz.pond_back.calendar.service;
 import com.itjamz.pond_back.calendar.domain.dto.WorkHistoryDto;
 import com.itjamz.pond_back.calendar.domain.dto.WorkSummaryDto;
 import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
+import com.itjamz.pond_back.calendar.domain.entity.WorkRecordDate;
 import com.itjamz.pond_back.calendar.domain.entity.WorkSummary;
 import com.itjamz.pond_back.calendar.repository.WorkHistoryRepository;
 import com.itjamz.pond_back.calendar.repository.WorkSummaryRepository;
 import com.itjamz.pond_back.user.domain.dto.TeamDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
-import com.itjamz.pond_back.user.domain.entity.Member_Role;
+import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import com.itjamz.pond_back.user.domain.entity.Team;
 import com.itjamz.pond_back.user.repository.TeamRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -51,7 +52,7 @@ class CalendarServiceTest {
         // given
         Long workHistoryId = 1L;
         Member member = Member.builder().id("tester").sabun("123456").build();
-        WorkHistoryDto updateDto = WorkHistoryDto.builder().title("수정된 제목").content("수정된 내용").build();
+        WorkHistoryDto updateDto = WorkHistoryDto.builder().title("수정된 제목").content("수정된 내용").startDate(LocalDateTime.now()).endDate(LocalDateTime.now()).build();
         WorkHistory existingWorkHistory = WorkHistory.builder().id(workHistoryId).member(member).title("원본 제목").build();
 
         when(workHistoryRepository.findById(workHistoryId)).thenReturn(Optional.of(existingWorkHistory));
@@ -221,13 +222,17 @@ class CalendarServiceTest {
                 .sabun("123456")
                 .id("tester")
                 .name("test")
-                .role(Member_Role.ROLE_LEADER)
+                .role(MemberRole.ROLE_LEADER)
                 .build();
 
         //when
         WorkHistory workHistoryRegister = WorkHistory.builder()
-                .startDate(workHistoryDto.getStartDate())
-                .endDate(workHistoryDto.getEndDate())
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(workHistoryDto.getStartDate())
+                                .endDate(workHistoryDto.getEndDate())
+                                .build()
+                )
                 .title(workHistoryDto.getTitle())
                 .content(workHistoryDto.getContent())
                 .member(member)
@@ -239,8 +244,8 @@ class CalendarServiceTest {
 
 
         // then
-        assertThat(savedWorkHistory.getStartDate()).isEqualTo(workHistoryDto.getStartDate());
-        assertThat(savedWorkHistory.getEndDate()).isEqualTo(workHistoryDto.getEndDate());
+        assertThat(savedWorkHistory.getWorkRecordDate().getStartDate()).isEqualTo(workHistoryDto.getStartDate());
+        assertThat(savedWorkHistory.getWorkRecordDate().getEndDate()).isEqualTo(workHistoryDto.getEndDate());
         assertThat(savedWorkHistory.getTitle()).isEqualTo(workHistoryDto.getTitle());
         assertThat(savedWorkHistory.getContent()).isEqualTo(workHistoryDto.getContent());
         assertThat(savedWorkHistory.getMember().getSabun()).isEqualTo(member.getSabun());
@@ -263,13 +268,17 @@ class CalendarServiceTest {
                 .sabun("123456")
                 .id("tester")
                 .name("test")
-                .role(Member_Role.ROLE_LEADER)
+                .role(MemberRole.ROLE_LEADER)
                 .build();
 
         //when
         WorkHistory workHistoryRegister = WorkHistory.builder()
-                .startDate(workHistoryDto.getStartDate())
-                .endDate(workHistoryDto.getEndDate())
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(workHistoryDto.getStartDate())
+                                .endDate(workHistoryDto.getEndDate())
+                                .build()
+                )
                 .title(workHistoryDto.getTitle())
                 .content(workHistoryDto.getContent())
                 .member(member)
@@ -280,8 +289,8 @@ class CalendarServiceTest {
 
 
         // then
-        assertThat(savedWorkHistory.getStartDate()).isEqualTo(workHistoryDto.getStartDate());
-        assertThat(savedWorkHistory.getEndDate()).isEqualTo(workHistoryDto.getEndDate());
+        assertThat(savedWorkHistory.getWorkRecordDate().getStartDate()).isEqualTo(workHistoryDto.getStartDate());
+        assertThat(savedWorkHistory.getWorkRecordDate().getEndDate()).isEqualTo(workHistoryDto.getEndDate());
         assertThat(savedWorkHistory.getTitle()).isEqualTo(workHistoryDto.getTitle());
         assertThat(savedWorkHistory.getContent()).isEqualTo(workHistoryDto.getContent());
         assertThat(savedWorkHistory.getMember().getSabun()).isEqualTo(member.getSabun());
@@ -299,7 +308,7 @@ class CalendarServiceTest {
                 .sabun("123456")
                 .id("tester")
                 .name("test")
-                .role(Member_Role.ROLE_LEADER)
+                .role(MemberRole.ROLE_LEADER)
                 .build();
 
         Team team1 = Team.builder()
@@ -310,24 +319,36 @@ class CalendarServiceTest {
         List<WorkHistoryDto> workHistoryDto = new ArrayList<>();
 
         WorkHistory test1 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 3, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.APRIL, 8, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 3, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.APRIL, 8, 0, 0, 0))
+                                .build()
+                )
                 .title("test1")
                 .member(member)
                 .team(team1)
                 .build();
 
         WorkHistory test2 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 10, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.APRIL, 19, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 10, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.APRIL, 19, 0, 0, 0))
+                                .build()
+                )
                 .title("test2")
                 .member(member)
                 .team(team1)
                 .build();
 
         WorkHistory test3 = WorkHistory.builder()
-                .startDate(LocalDateTime.of(2025, Month.APRIL, 20, 0, 0, 0))
-                .endDate(LocalDateTime.of(2025, Month.MAY, 2, 0, 0, 0))
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(LocalDateTime.of(2025, Month.APRIL, 20, 0, 0, 0))
+                                .endDate(LocalDateTime.of(2025, Month.MAY, 2, 0, 0, 0))
+                                .build()
+                )
                 .title("test3")
                 .member(member)
                 .team(team1)

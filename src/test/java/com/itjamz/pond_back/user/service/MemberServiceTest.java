@@ -3,14 +3,14 @@ package com.itjamz.pond_back.user.service;
 import com.itjamz.pond_back.k6.repository.MileageRepository;
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
-import com.itjamz.pond_back.user.domain.entity.Member_Role;
+import com.itjamz.pond_back.user.domain.entity.MemberPw;
+import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import com.itjamz.pond_back.user.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -42,9 +42,9 @@ class MemberServiceTest {
         return Member.builder()
                 .sabun("123456")
                 .id("tester")
-                .pw("pwtest") // 원본 비밀번호
+                .pw(new MemberPw("pwtest")) // 원본 비밀번호
                 .name("테스터")
-                .role(Member_Role.ROLE_NORMAL)
+                .role(MemberRole.ROLE_NORMAL)
                 .build();
     }
 
@@ -55,7 +55,7 @@ class MemberServiceTest {
         Member member = this.generateMember();
         MemberDto memberDto = MemberDto.builder()
                 .pw("changePw")
-                .role(Member_Role.ROLE_LEADER)
+                .role(MemberRole.ROLE_LEADER)
                 .build();
 
         // when
@@ -75,17 +75,18 @@ class MemberServiceTest {
         Member member = this.generateMember();
         MemberDto memberDto = MemberDto.builder()
                 .pw("changePw")
-                .role(Member_Role.ROLE_LEADER)
+                .role(MemberRole.ROLE_LEADER)
                 .build();
         when(memberRepository.findMemberBySabun(member.getSabun())).thenReturn(Optional.of(member));
+        when(passwordEncoder.encode("changePw")).thenReturn("encoded_changePw");
 
         // when
         Member changedMember = memberService.memberChangeInfo(member, memberDto);
 
         // then
         assertThat(changedMember.getSabun()).isEqualTo(member.getSabun());
-        assertThat(passwordEncoder.encode(changedMember.getPw())).isEqualTo(member.getPw());
-        assertThat(changedMember.getRole()).isEqualTo(Member_Role.ROLE_LEADER);
+        assertThat(changedMember.getPw().getPw()).isEqualTo("encoded_changePw");
+        assertThat(changedMember.getRole()).isEqualTo(MemberRole.ROLE_LEADER);
     }
 
     @Test
@@ -93,7 +94,7 @@ class MemberServiceTest {
     void findMemberById(){
         // given
         Member member = this.generateMember();
-        ReflectionTestUtils.setField(member,"pw","encoded_pwtest");
+        ReflectionTestUtils.setField(member.getPw(),"pw","encoded_pwtest");
 
         // when
         when(memberRepository.findMemberById("tester")).thenReturn(Optional.of(member));
@@ -102,7 +103,7 @@ class MemberServiceTest {
         // then
         assertThat(findMember.get().getId()).isEqualTo(member.getId());
         assertThat(findMember.get().getSabun()).isEqualTo(member.getSabun());
-        assertThat(findMember.get().getPw()).isEqualTo("encoded_pwtest");
+        assertThat(findMember.get().getPw().getPw()).isEqualTo("encoded_pwtest");
 
     }
 
@@ -128,7 +129,7 @@ class MemberServiceTest {
 
         // 4. Mock 객체들의 행동을 미리 정의해줍니다.
         // - "pwtest"가 암호화되면 "encoded_password"가 될 것이라고 가정
-        when(passwordEncoder.encode("pwtest")).thenReturn("encoded_password");
+        when(passwordEncoder.encode(any())).thenReturn("encoded_password");
         // - memberRepository.save가 호출되면, 인자로 받은 객체를 그대로 반환할 것이라고 가정
         when(memberRepository.save(any(Member.class))).thenReturn(member);
         // - 중복된 사번이 없다고 가정
@@ -141,9 +142,9 @@ class MemberServiceTest {
 
         // then (결과 검증)
         // 5. 서비스 로직을 거친 후, 비밀번호가 우리가 예상한 "encoded_password"로 변경되었는지 확인합니다.
-        assertThat(registeredMember.getPw()).isEqualTo("encoded_password");
+        assertThat(registeredMember.getPw().getPw()).isEqualTo("encoded_password");
         // 6. 역할(Role)이 정상적으로 부여되었는지 확인합니다.
-        assertThat(registeredMember.getRole()).isEqualTo(Member_Role.ROLE_NORMAL);
+        assertThat(registeredMember.getRole()).isEqualTo(MemberRole.ROLE_NORMAL);
 
         // 7. 의존 객체들의 메서드가 정확히 호출되었는지 추가로 검증합니다.
         verify(passwordEncoder).encode("pwtest"); // pwtest로 encode가 호출되었는가?

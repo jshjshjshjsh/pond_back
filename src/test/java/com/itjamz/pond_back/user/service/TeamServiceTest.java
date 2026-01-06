@@ -2,10 +2,7 @@ package com.itjamz.pond_back.user.service;
 
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.dto.MemberTeamJoinDto;
-import com.itjamz.pond_back.user.domain.entity.Member;
-import com.itjamz.pond_back.user.domain.entity.MemberTeam;
-import com.itjamz.pond_back.user.domain.entity.Member_Role;
-import com.itjamz.pond_back.user.domain.entity.Team;
+import com.itjamz.pond_back.user.domain.entity.*;
 import com.itjamz.pond_back.user.repository.MemberRepository;
 import com.itjamz.pond_back.user.repository.MemberTeamRepository;
 import com.itjamz.pond_back.user.repository.TeamRepository;
@@ -57,9 +54,9 @@ class TeamServiceTest {
         return Member.builder()
                 .sabun(sabun)
                 .id(id)
-                .pw(pw)
+                .pw(new MemberPw(pw))
                 .name(name)
-                .role(Member_Role.ROLE_NORMAL)
+                .role(MemberRole.ROLE_NORMAL)
                 .build();
     }
 

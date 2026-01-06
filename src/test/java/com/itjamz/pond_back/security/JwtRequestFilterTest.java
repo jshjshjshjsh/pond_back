@@ -1,7 +1,5 @@
 package com.itjamz.pond_back.security;
 
-import com.itjamz.pond_back.user.domain.entity.Member;
-import com.itjamz.pond_back.user.domain.entity.Member_Role;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

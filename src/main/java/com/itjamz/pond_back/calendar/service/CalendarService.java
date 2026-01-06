@@ -2,7 +2,9 @@ package com.itjamz.pond_back.calendar.service;
 
 import com.itjamz.pond_back.calendar.domain.dto.WorkHistoryDto;
 import com.itjamz.pond_back.calendar.domain.dto.WorkSummaryDto;
+import com.itjamz.pond_back.calendar.domain.entity.Work;
 import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
+import com.itjamz.pond_back.calendar.domain.entity.WorkRecordDate;
 import com.itjamz.pond_back.calendar.domain.entity.WorkSummary;
 import com.itjamz.pond_back.calendar.repository.WorkHistoryRepository;
 import com.itjamz.pond_back.calendar.repository.WorkSummaryRepository;
@@ -33,8 +35,7 @@ public class CalendarService {
     @Transactional
     public void deleteWorkHistory(Long id, Member member) {
         Optional<WorkHistory> findWorkHistory = workHistoryRepository.findById(id);
-        if (findWorkHistory.isEmpty() || !findWorkHistory.get().getMember().getId().equals(member.getId()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[workhistory 조회 실패] 조회 실패");
+        validWork(findWorkHistory, member);
 
         workHistoryRepository.delete(findWorkHistory.get());
     }
@@ -43,8 +44,7 @@ public class CalendarService {
     public void updateWorkHistory(Long id, WorkHistoryDto workHistoryDto, Member member) {
         // 먼저 본인의 정상적인 workhistory인지 확인
         Optional<WorkHistory> findWorkHistory = workHistoryRepository.findById(id);
-        if (findWorkHistory.isEmpty() || !findWorkHistory.get().getMember().getId().equals(member.getId()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[workhistory 조회 실패] 조회 실패");
+        validWork(findWorkHistory, member);
 
         // 다음 if else 문으로 update
         // team은 find를 해주고 넣어줘야 함
@@ -64,8 +64,12 @@ public class CalendarService {
         WorkHistory workHistory = WorkHistory.builder()
                 .title(workHistoryDto.getTitle())
                 .content(workHistoryDto.getContent())
-                .startDate(workHistoryDto.getStartDate())
-                .endDate(workHistoryDto.getEndDate())
+                .workRecordDate(
+                        WorkRecordDate.builder()
+                                .startDate(workHistoryDto.getStartDate())
+                                .endDate(workHistoryDto.getEndDate())
+                                .build()
+                )
                 .isShare(workHistoryDto.getIsShare())
                 .member(member)
                 .team(team)
@@ -112,8 +116,7 @@ public class CalendarService {
     public void deleteWorkSummary(Long id, Member member) {
         // 본인의 worksummary 인지 검증
         Optional<WorkSummary> workSummary = workSummaryRepository.findById(id);
-        if (!(workSummary.isPresent() && workSummary.get().getMember().getId().equals(member.getId())))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[worksummary 삭제 실패] 삭제 실패");
+        validWork(workSummary, member);
 
         workSummaryRepository.deleteById(id);
     }
@@ -122,8 +125,7 @@ public class CalendarService {
     public WorkSummary updateWorkSummary(WorkSummaryDto workSummaryDto, Member member){
         // 현재는 share 값만 수정 가능
         Optional<WorkSummary> workSummary = workSummaryRepository.findById(workSummaryDto.getId());
-        if (!(workSummary.isPresent() && workSummary.get().getMember().getId().equals(member.getId())))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[worksummary 조회 실패] 조회 실패");
+        validWork(workSummary, member);
 
         if (workSummaryDto.getIsShare() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[worksummary] 잘못된 요청");
@@ -131,5 +133,10 @@ public class CalendarService {
         workSummary.get().changeIsShare(workSummaryDto.getIsShare());
 
         return workSummary.get();
+    }
+
+    private void validWork(Optional<? extends Work> work, Member member){
+        if (work.isEmpty() || !work.get().getMember().getId().equals(member.getId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[workhistory 조회 실패] 조회 실패");
     }
 }
