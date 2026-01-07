@@ -26,11 +26,6 @@ public class MemberDto {
                 .name(member.getName())
                 .role(member.getRole());
 
-        List<TeamDto> teamDtos = member.getMemberTeams().stream()
-                .map(memberTeam -> TeamDto.from(memberTeam.getTeam()))
-                .collect(Collectors.toList());
-        builder.teams(teamDtos);
-
         return builder.build();
     }
 }

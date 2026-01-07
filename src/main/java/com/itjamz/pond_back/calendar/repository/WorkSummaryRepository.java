@@ -15,8 +15,8 @@ public interface WorkSummaryRepository extends JpaRepository<WorkSummary, Long> 
 
     @Query("SELECT DISTINCT ws FROM WorkSummary ws " +
             "JOIN MemberTeam mt " +
-            "ON ws.member = mt.member " +
-            "WHERE mt.team in (SELECT mt2.team FROM MemberTeam mt2 WHERE mt2.member.sabun = :memberSabun) " +
+            "ON ws.member.sabun = mt.id.member " +
+            "WHERE mt.id.team in (SELECT mt2.id.team FROM MemberTeam mt2 WHERE mt2.id.member = :memberSabun) " +
             "AND ws.year = :year AND ws.month = :month " +
             "ORDER BY ws.member.sabun ")
     List<WorkSummary> findTeamWorkSummaryByYearAndMonth(@Param("year") int year, @Param("month") int month, @Param("memberSabun") String memberSabun);

@@ -65,8 +65,6 @@ public class TeamService {
                     MemberTeamId memberTeamId = new MemberTeamId(member.getSabun(), findTeam.getId());
                     return MemberTeam.builder()
                             .id(memberTeamId)
-                            .member(member)
-                            .team(findTeam)
                             .build();
                 })
                 .collect(Collectors.toList());

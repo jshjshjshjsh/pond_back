@@ -30,10 +30,6 @@ public class Member {
     @NotNull
     private MemberRole role;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<MemberTeam> memberTeams = new ArrayList<>();
-
     public void encodedPw(String rawPw, PasswordEncoder encoder){
         MemberPw rawMemberPw = new MemberPw(rawPw);
         this.pw = rawMemberPw.encodingPw(encoder);

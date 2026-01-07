@@ -137,15 +137,11 @@ class WorkHistoryRepositoryTest {
         MemberTeamId memberTeamId1 = new MemberTeamId(member1.getSabun(), team.getId());
         MemberTeam memberTeam1 = MemberTeam.builder()
                 .id(memberTeamId1)
-                .member(member1)
-                .team(team)
                 .build();
 
         MemberTeamId memberTeamId2 = new MemberTeamId(member2.getSabun(), team.getId());
         MemberTeam memberTeam2 = MemberTeam.builder()
                 .id(memberTeamId2)
-                .member(member2)
-                .team(team)
                 .build();
 
         entityManager.persistAndFlush(memberTeam1);
