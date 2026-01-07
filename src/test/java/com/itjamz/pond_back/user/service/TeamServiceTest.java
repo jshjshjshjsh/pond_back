@@ -171,11 +171,11 @@ class TeamServiceTest {
         assertThat(registeredMemberTeams).hasSize(2);
 
         // 2. 각 MemberTeam 객체의 정보가 올바르게 설정되었는지 확인
-        assertThat(registeredMemberTeams.get(0).getTeam().getId()).isEqualTo(1L);
-        assertThat(registeredMemberTeams.get(0).getMember().getSabun()).isEqualTo("123456");
+        assertThat(registeredMemberTeams.get(0).getId().getTeam()).isEqualTo(1L);
+        assertThat(registeredMemberTeams.get(0).getId().getMember()).isEqualTo("123456");
 
-        assertThat(registeredMemberTeams.get(1).getTeam().getId()).isEqualTo(1L);
-        assertThat(registeredMemberTeams.get(1).getMember().getSabun()).isEqualTo("123457");
+        assertThat(registeredMemberTeams.get(1).getId().getTeam()).isEqualTo(1L);
+        assertThat(registeredMemberTeams.get(1).getId().getMember()).isEqualTo("123457");
     }
 
     @Test
