@@ -12,7 +12,7 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 public abstract class AbstractContainerBaseTest {
 
-    private static final String REDIS_IMAGE = "redis:latest";
+    private static final String REDIS_IMAGE = "redis:7-alpine";
 
     @Container
     private static final GenericContainer<?> REDIS_CONTAINER =
