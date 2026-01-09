@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 
 @Embeddable
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 public class MemberTeamId implements Serializable {
-    private String member; // Member's PK (sabun)
-    private Long team;     // Team's PK (id)
+    private String member;
+    private Long team;
+
+    protected MemberTeamId() {}
 }
