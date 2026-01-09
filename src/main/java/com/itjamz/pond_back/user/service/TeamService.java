@@ -2,12 +2,11 @@ package com.itjamz.pond_back.user.service;
 
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.dto.MemberTeamJoinDto;
-import com.itjamz.pond_back.user.domain.dto.TeamDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberTeam;
 import com.itjamz.pond_back.user.domain.entity.MemberTeamId;
 import com.itjamz.pond_back.user.domain.entity.Team;
-import com.itjamz.pond_back.user.repository.MemberRepository;
+import com.itjamz.pond_back.user.repository.MemberJpaRepository;
 import com.itjamz.pond_back.user.repository.MemberTeamRepository;
 import com.itjamz.pond_back.user.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class TeamService {
 
-    private final MemberRepository memberRepository;
+    private final MemberJpaRepository memberRepository;
     private final TeamRepository teamRepository;
     private final MemberTeamRepository memberTeamRepository;
 

@@ -15,10 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-class MemberRepositoryTest {
+class MemberJpaRepositoryTest {
 
     @Autowired
-    MemberRepository memberRepository;
+    MemberJpaRepository memberRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
 
