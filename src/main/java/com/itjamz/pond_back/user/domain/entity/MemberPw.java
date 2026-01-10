@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Embeddable
 @Getter
-@NoArgsConstructor
 @EqualsAndHashCode
 public class MemberPw {
 
@@ -24,6 +23,8 @@ public class MemberPw {
             throw new IllegalArgumentException("패스워드 규칙에 맞지 않습니다.");
         this.pw = pw;
     }
+
+    protected MemberPw() {}
 
     public MemberPw encodingPw(PasswordEncoder encoder){
         return new MemberPw(encoder.encode(this.pw));

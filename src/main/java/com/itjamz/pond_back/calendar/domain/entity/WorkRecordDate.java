@@ -11,13 +11,14 @@ import java.time.LocalDateTime;
 
 @Embeddable
 @Getter
-@NoArgsConstructor
 public class WorkRecordDate {
 
     @NotNull
     private LocalDateTime startDate;
     @NotNull
     private LocalDateTime endDate;
+
+    protected WorkRecordDate() {}
 
     @Builder
     public WorkRecordDate(LocalDateTime startDate, LocalDateTime endDate) {

@@ -2,6 +2,7 @@ package com.itjamz.pond_back.user.repository;
 
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberPw;
+import com.itjamz.pond_back.user.infra.repository.MemberJpaRepository;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,10 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-class MemberRepositoryTest {
+class MemberJpaRepositoryTest {
 
     @Autowired
-    MemberRepository memberRepository;
+    MemberJpaRepository memberRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
 
