@@ -6,7 +6,7 @@ import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberTeam;
 import com.itjamz.pond_back.user.domain.entity.MemberTeamId;
 import com.itjamz.pond_back.user.domain.entity.Team;
-import com.itjamz.pond_back.user.repository.MemberJpaRepository;
+import com.itjamz.pond_back.user.infra.repository.MemberJpaRepository;
 import com.itjamz.pond_back.user.repository.MemberTeamRepository;
 import com.itjamz.pond_back.user.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,10 +1,9 @@
-package com.itjamz.pond_back.user.repository;
+package com.itjamz.pond_back.user.infra.repository;
 
 import com.itjamz.pond_back.user.domain.entity.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;

@@ -3,7 +3,7 @@ package com.itjamz.pond_back.user.service;
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.dto.MemberTeamJoinDto;
 import com.itjamz.pond_back.user.domain.entity.*;
-import com.itjamz.pond_back.user.repository.MemberJpaRepository;
+import com.itjamz.pond_back.user.infra.repository.MemberJpaRepository;
 import com.itjamz.pond_back.user.repository.MemberTeamRepository;
 import com.itjamz.pond_back.user.repository.TeamRepository;
 import org.junit.jupiter.api.DisplayName;

@@ -5,7 +5,7 @@ import com.itjamz.pond_back.security.JwtUtil;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberPw;
 import com.itjamz.pond_back.user.domain.entity.MemberRole;
-import com.itjamz.pond_back.user.repository.MemberJpaRepository;
+import com.itjamz.pond_back.user.infra.repository.MemberJpaRepository;
 import com.jayway.jsonpath.JsonPath;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;

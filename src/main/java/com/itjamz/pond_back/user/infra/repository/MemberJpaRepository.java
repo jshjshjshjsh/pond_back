@@ -1,4 +1,4 @@
-package com.itjamz.pond_back.user.repository;
+package com.itjamz.pond_back.user.infra.repository;
 
 import com.itjamz.pond_back.user.domain.entity.Member;
 import org.springframework.data.jpa.repository.EntityGraph;

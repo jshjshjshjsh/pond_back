@@ -1,7 +1,8 @@
-package com.itjamz.pond_back.user.repository;
+package com.itjamz.pond_back.user.infra.repository;
 
 
 import com.itjamz.pond_back.user.domain.entity.MemberTeam;
+import com.itjamz.pond_back.user.repository.MemberTeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

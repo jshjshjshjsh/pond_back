@@ -1,8 +1,8 @@
-package com.itjamz.pond_back.user.repository;
+package com.itjamz.pond_back.user.infra.repository;
 
 import com.itjamz.pond_back.user.domain.entity.Team;
+import com.itjamz.pond_back.user.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class TeamRepositoryImpl implements TeamRepository{
+public class TeamRepositoryImpl implements TeamRepository {
 
     private final TeamJpaRepository teamRepository;
 
