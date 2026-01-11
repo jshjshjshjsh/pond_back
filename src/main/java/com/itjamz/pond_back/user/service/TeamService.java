@@ -2,6 +2,7 @@ package com.itjamz.pond_back.user.service;
 
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.dto.MemberTeamJoinDto;
+import com.itjamz.pond_back.user.domain.dto.TeamDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberTeam;
 import com.itjamz.pond_back.user.domain.entity.MemberTeamId;
@@ -79,8 +80,12 @@ public class TeamService {
     }
 
     @Transactional(readOnly = true)
-    public List<Team> getTeams(Member member) {
+    public List<TeamDto> getTeams(Member member) {
 
-        return teamRepository.findTeamsByMemberSabun(member.getSabun());
+        List<Team> teams = teamRepository.findTeamsByMemberSabun(member.getSabun());
+
+        return teams.stream()
+                .map(TeamDto::from)
+                .collect(Collectors.toList());
     }
 }

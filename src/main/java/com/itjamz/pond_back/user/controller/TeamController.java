@@ -44,7 +44,7 @@ public class TeamController {
     }
 
     @GetMapping("/leader/teams")
-    public ResponseEntity<List<Team>> getMyTeams(@AuthenticationPrincipal CustomUserDetails userDetails){
+    public ResponseEntity<List<TeamDto>> getMyTeams(@AuthenticationPrincipal CustomUserDetails userDetails){
 
         return ResponseEntity.ok(teamService.getTeams(userDetails.getMember()));
     }
