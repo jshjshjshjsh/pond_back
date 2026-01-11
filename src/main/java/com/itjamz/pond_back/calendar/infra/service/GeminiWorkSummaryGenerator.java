@@ -3,10 +3,12 @@ package com.itjamz.pond_back.calendar.infra.service;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 import com.itjamz.pond_back.calendar.service.WorkSummaryGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class GeminiWorkSummaryGenerator implements WorkSummaryGenerator {
 
     @Value("${gemini.api.secret}")
@@ -24,7 +26,7 @@ public class GeminiWorkSummaryGenerator implements WorkSummaryGenerator {
                         prompt,
                         null);
 
-        System.out.println(response.text());
+        log.info(response.text());
 
         return response.text();
     }
