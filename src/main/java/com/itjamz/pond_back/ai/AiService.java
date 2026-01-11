@@ -2,6 +2,7 @@ package com.itjamz.pond_back.ai;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
+import com.itjamz.pond_back.calendar.service.WorkSummaryGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -10,23 +11,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AiService {
 
-    @Value("${gemini.api.secret}")
-    private String geminiApiKey;
+    private final WorkSummaryGenerator workSummaryGenerator;
 
     public String getSummaryFromGemini(String prompt) {
-        Client client = Client.builder().apiKey(geminiApiKey).build();
 
-        prompt = "아래의 내용을 분류하고 정리해서 나열해줘 \n" + prompt;
-
-        GenerateContentResponse response =
-                client.models.generateContent(
-                        "gemini-2.5-flash",
-                        prompt,
-                        null);
-
-        System.out.println(response.text());
-
-        return response.text();
+        return workSummaryGenerator.generateSummary(prompt);
     }
 
 }
