@@ -2,6 +2,7 @@ package com.itjamz.pond_back.user.service;
 
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.dto.MemberTeamJoinDto;
+import com.itjamz.pond_back.user.domain.dto.TeamDto;
 import com.itjamz.pond_back.user.domain.entity.*;
 import com.itjamz.pond_back.user.infra.repository.MemberJpaRepository;
 import com.itjamz.pond_back.user.repository.MemberTeamRepository;
@@ -71,7 +72,7 @@ class TeamServiceTest {
 
         // when
         when(teamRepository.findTeamsByMemberSabun("123456")).thenReturn(List.of(team1, team2));
-        List<Team> findTeams = teamService.getTeams(member);
+        List<TeamDto> findTeams = teamService.getTeams(member);
 
         // then
         assertThat(findTeams).hasSize(2);
