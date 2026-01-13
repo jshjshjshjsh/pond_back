@@ -1,9 +1,12 @@
 package com.itjamz.pond_back.user.service;
 
 import com.itjamz.pond_back.k6.domain.Mileage;
+import com.itjamz.pond_back.k6.domain.Point;
 import com.itjamz.pond_back.k6.repository.MileageRepository;
+import com.itjamz.pond_back.k6.repository.PointRepository;
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
+import com.itjamz.pond_back.user.domain.entity.MemberPw;
 import com.itjamz.pond_back.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final MileageRepository mileageRepository;
+    private final PointRepository pointRepository;
 
     @Transactional
     public Member memberChangeInfo(Member member, MemberDto memberDto) {
@@ -37,10 +41,20 @@ public class MemberService {
     }
 
     @Transactional
-    public Member memberRegister(Member member) {
-        if (memberRepository.findMemberByIdOrSabun(member.getId(), member.getSabun()).isPresent()) {
+    public Member memberRegister(MemberDto memberDto) {
+        if (memberRepository.findMemberByIdOrSabun(memberDto.getId(), memberDto.getSabun()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "[회원가입 실패] 이미 존재하는 ID 또는 사번");
         }
+
+        Member member = Member.builder()
+                .sabun(memberDto.getSabun())
+                .id(memberDto.getId())
+                .pw(new MemberPw(memberDto.getPw()))
+                .name(memberDto.getName())
+                .role(memberDto.getRole())
+                .build();
+
+        System.out.println("member.toString() = " + member.toString());
 
         member.encodedPw(member.getPw().getPw(), passwordEncoder);
 
@@ -51,6 +65,13 @@ public class MemberService {
                 .amount(0L)
                 .build();
         mileageRepository.save(mileage);
+
+        Point point = Point.builder()
+                .memberId(member.getId())
+                .amount(0L)
+                .version(0L)
+                .build();
+        pointRepository.save(point);
 
         return savedMember;
     }

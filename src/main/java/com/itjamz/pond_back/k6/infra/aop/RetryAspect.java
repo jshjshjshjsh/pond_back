@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ public class RetryAspect {
             try {
                 return joinPoint.proceed();
 
-            } catch (ObjectOptimisticLockingFailureException e) {
+            } catch (OptimisticLockingFailureException e) {
                 exceptionHolder = e;
                 log.warn("낙관적 락 충돌 발생! 재시도 {}/{}", retryCount, retryValue);
 

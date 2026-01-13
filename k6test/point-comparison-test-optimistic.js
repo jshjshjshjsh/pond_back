@@ -40,7 +40,6 @@ export function setup() {
     check(loginRes, { 'Logged in': (r) => r.status === 200 && accessToken !== null });
 
     // 3. 초기 잔액 설정 (Mileage는 이미 0원 생성, Point도 생성되었다고 가정)
-    // 필요하다면 여기서 초기 충전 요청을 보내세요.
 
     return { accessToken: accessToken };
 }
@@ -52,6 +51,7 @@ export function setup() {
 export const options = {
     scenarios: {
         // 시나리오 1: 기존 Redis 분산락 (Mileage)
+        /*
         redis_lock_strategy: {
             executor: 'ramping-vus',
             startVUs: 0,
@@ -63,6 +63,7 @@ export const options = {
             gracefulRampDown: '0s',
             exec: 'testRedisLock', // 실행할 함수 지정
         },
+         */
         // 시나리오 2: 낙관적 락 (Point)
         optimistic_lock_strategy: {
             executor: 'ramping-vus',
@@ -76,6 +77,7 @@ export const options = {
             exec: 'testOptimisticLock', // 실행할 함수 지정
         },
         // 시나리오 3: 비관적 락 (Point)
+        /*
         pessimistic_lock_strategy: {
             executor: 'ramping-vus',
             startVUs: 0,
@@ -87,6 +89,7 @@ export const options = {
             gracefulRampDown: '0s',
             exec: 'testPessimisticLock', // 실행할 함수 지정
         },
+         */
     },
     thresholds: {
         // 전체 에러율 1% 미만 (낙관적 락 실패 포함 시 조정 필요)
@@ -119,7 +122,7 @@ export function testOptimisticLock(data) {
     };
 
     // 충돌 유발을 위해 동시에 입금 요청
-    const res = http.post(`${BASE_URL}/k6/point/optimistic/deposit`, JSON.stringify(TRANSACTION_AMOUNT), { headers: headers });
+    const res = http.post(`${BASE_URL}/k6/point/deposit/optimistic`, JSON.stringify(TRANSACTION_AMOUNT), { headers: headers });
 
     // 낙관적 락은 충돌 시 500 또는 409 에러가 발생할 수 있음 -> 이를 Grafana에서 에러율로 확인
     check(res, { 'Optimistic: Success': r => r.status === 200 });
@@ -132,7 +135,7 @@ export function testPessimisticLock(data) {
         'Authorization': `Bearer ${data.accessToken}`
     };
 
-    const res = http.post(`${BASE_URL}/k6/point/pessimistic/deposit`, JSON.stringify(TRANSACTION_AMOUNT), { headers: headers });
+    const res = http.post(`${BASE_URL}/k6/point/deposit/pessimistic`, JSON.stringify(TRANSACTION_AMOUNT), { headers: headers });
 
     // 비관적 락은 느리더라도 성공해야 함
     check(res, { 'Pessimistic: Success': r => r.status === 200 });

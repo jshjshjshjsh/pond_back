@@ -116,7 +116,7 @@ class MemberServiceTest {
 
         // when
         when(memberRepository.findMemberByIdOrSabun(any(String.class), any(String.class))).thenReturn(Optional.ofNullable(member));
-        assertThatThrownBy(() -> memberService.memberRegister(member))
+        assertThatThrownBy(() -> memberService.memberRegister(MemberDto.from(member)))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("[회원가입 실패] 이미 존재하는 ID 또는 사번");
     }
@@ -137,7 +137,7 @@ class MemberServiceTest {
 
 
         // when (실제 테스트 실행)
-        Member registeredMember = memberService.memberRegister(member);
+        Member registeredMember = memberService.memberRegister(MemberDto.from(member));
 
 
         // then (결과 검증)

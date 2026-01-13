@@ -6,5 +6,6 @@ import java.util.Optional;
 
 public interface PointRepository {
 
+    Point save(Point point);
     Optional<Point> findByMemberIdForUpdate(String memberId);
 }

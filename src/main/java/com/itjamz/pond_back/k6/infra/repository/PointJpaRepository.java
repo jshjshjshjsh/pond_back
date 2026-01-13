@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface PointJpaRepository extends JpaRepository<Point, Long> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    //@Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select p from Point p where p.memberId = :memberId")
     Optional<Point> findByMemberIdForUpdate(String memberId);
 }
