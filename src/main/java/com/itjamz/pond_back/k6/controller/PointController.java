@@ -15,6 +15,16 @@ public class PointController {
 
     private final PointService pointService;
 
+    @PostMapping("/deposit/optimistic")
+    public ResponseEntity<Long> depositOptimistic(
+            @RequestBody Long amount,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        Long currentPoint = pointService.depositOptimistic(userDetails.getMember().getId(), amount);
+
+        return ResponseEntity.ok(currentPoint);
+    }
+
     @PostMapping("/deposit")
     public ResponseEntity<Long> deposit(@RequestBody Long amount, @AuthenticationPrincipal CustomUserDetails userDetails) {
 

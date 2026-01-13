@@ -35,6 +35,20 @@ class PointServiceTest {
 
     @Test
     @DisplayName("입금 로직 테스트")
+    void depositOptimistic() {
+        //given
+        String memberId = "tester";
+        Long amount = 100L;
+
+        //when
+        when(pointRepository.findByMemberIdForUpdate(memberId)).thenReturn(Optional.of(pointGeneratorWithAmount(0L)));
+
+        //then
+        assertThat(pointService.depositOptimistic(memberId, amount)).isEqualTo(amount);
+    }
+
+    @Test
+    @DisplayName("입금 로직 테스트")
     void deposit() {
         //given
         String memberId = "tester";

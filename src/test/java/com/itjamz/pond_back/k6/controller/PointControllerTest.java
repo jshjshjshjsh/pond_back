@@ -65,13 +65,27 @@ class PointControllerTest {
 
     @Test
     @DisplayName("포인트 입금 테스트")
+    void depositOptimisticTest() throws Exception{
+
+        mockMvc.perform(post("/k6/point/deposit/optimistic")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(100L))
+                )
+                .andExpect(status().isOk());
+
+        verify(pointService).depositOptimistic(any(String.class), any(Long.class));
+    }
+
+
+    @Test
+    @DisplayName("포인트 입금 테스트")
     void depositTest() throws Exception{
 
         mockMvc.perform(post("/k6/point/deposit")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(100L))
-            )
-            .andExpect(status().isOk());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(100L))
+                )
+                .andExpect(status().isOk());
 
         verify(pointService).deposit(any(String.class), any(Long.class));
     }
