@@ -25,4 +25,12 @@ public class PointService {
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
         return point.withdraw(amount);
     }
+
+    @Transactional(readOnly = true)
+    public Long getPoint(String memberId) {
+        Point point = pointRepository.findByMemberIdForUpdate(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+
+        return point.getAmount();
+    }
 }
