@@ -34,7 +34,21 @@ class PointServiceTest {
     }
 
     @Test
-    @DisplayName("입금 로직 테스트")
+    @DisplayName("비관적락 입금 로직 테스트")
+    void depositPessimistic() {
+        //given
+        String memberId = "tester";
+        Long amount = 100L;
+
+        //when
+        when(pointRepository.findByMemberIdWithPessimisticLock(memberId)).thenReturn(Optional.of(pointGeneratorWithAmount(0L)));
+
+        //then
+        assertThat(pointService.depositPessimistic(memberId, amount)).isEqualTo(amount);
+    }
+
+    @Test
+    @DisplayName("낙관적락 입금 로직 테스트")
     void depositOptimistic() {
         //given
         String memberId = "tester";

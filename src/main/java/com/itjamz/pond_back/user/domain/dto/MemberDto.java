@@ -1,6 +1,7 @@
 package com.itjamz.pond_back.user.domain.dto;
 
 import com.itjamz.pond_back.user.domain.entity.Member;
+import com.itjamz.pond_back.user.domain.entity.MemberPw;
 import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class MemberDto {
         MemberDtoBuilder builder = MemberDto.builder()
                 .sabun(member.getSabun())
                 .id(member.getId())
+                .pw(member.getPw().getPw())
                 .name(member.getName())
                 .role(member.getRole());
 

@@ -22,4 +22,9 @@ public class PointRepositoryImpl implements PointRepository {
     public Optional<Point> findByMemberIdForUpdate(String memberId) {
         return pointRepository.findByMemberIdForUpdate(memberId);
     }
+
+    @Override
+    public Optional<Point> findByMemberIdWithPessimisticLock (String memberId) {
+        return pointRepository.findByMemberIdWithPessimisticLock(memberId);
+    }
 }

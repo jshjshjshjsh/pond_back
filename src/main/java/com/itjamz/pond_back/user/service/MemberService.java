@@ -49,14 +49,12 @@ public class MemberService {
         Member member = Member.builder()
                 .sabun(memberDto.getSabun())
                 .id(memberDto.getId())
-                .pw(new MemberPw(memberDto.getPw()))
+                .pw(MemberPw.create(memberDto.getPw(), passwordEncoder))
                 .name(memberDto.getName())
                 .role(memberDto.getRole())
                 .build();
 
         System.out.println("member.toString() = " + member.toString());
-
-        member.encodedPw(member.getPw().getPw(), passwordEncoder);
 
         Member savedMember = memberRepository.save(member);
 

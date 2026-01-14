@@ -9,6 +9,7 @@ import com.itjamz.pond_back.calendar.repository.WorkHistoryRepository;
 import com.itjamz.pond_back.calendar.repository.WorkSummaryRepository;
 import com.itjamz.pond_back.user.domain.dto.TeamDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
+import com.itjamz.pond_back.user.domain.entity.MemberPw;
 import com.itjamz.pond_back.user.domain.entity.MemberRole;
 import com.itjamz.pond_back.user.domain.entity.Team;
 import com.itjamz.pond_back.user.repository.TeamRepository;
@@ -19,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -44,6 +46,8 @@ class CalendarServiceTest {
     private WorkHistoryRepository workHistoryRepository;
     @Mock
     private WorkSummaryRepository workSummaryRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
 
     @Test
@@ -107,7 +111,7 @@ class CalendarServiceTest {
         // given
         int year = 2025;
         int month = 8;
-        Member member = Member.builder().sabun("123456").build();
+        Member member = Member.builder().sabun("123456").pw(MemberPw.create("testerpw", passwordEncoder)).build();
         WorkSummary summary = WorkSummary.builder().id(1L).year(year).month(month).member(member).build();
 
         when(workSummaryRepository.findByYearAndMonthAndMember_Sabun(year, month, member.getSabun()))
@@ -127,7 +131,7 @@ class CalendarServiceTest {
         // given
         int year = 2025;
         int month = 8;
-        Member member = Member.builder().sabun("123456").build();
+        Member member = Member.builder().sabun("123456").pw(MemberPw.create("testerpw", passwordEncoder)).build();
         WorkSummary summary = WorkSummary.builder().id(1L).year(year).month(month).member(member).build();
 
         when(workSummaryRepository.findTeamWorkSummaryByYearAndMonth(year, month, member.getSabun()))
@@ -308,6 +312,7 @@ class CalendarServiceTest {
                 .sabun("123456")
                 .id("tester")
                 .name("test")
+                .pw(MemberPw.create("testerpw", passwordEncoder))
                 .role(MemberRole.ROLE_LEADER)
                 .build();
 

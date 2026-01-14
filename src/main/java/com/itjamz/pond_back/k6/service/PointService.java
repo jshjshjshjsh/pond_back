@@ -15,6 +15,16 @@ public class PointService {
 
     @Retry
     @Transactional
+    public Long depositPessimistic(String memberId, Long amount) {
+        Point point = pointRepository.findByMemberIdWithPessimisticLock(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        point.deposit(amount);
+        return point.getAmount();
+    }
+
+    @Retry
+    @Transactional
     public Long depositOptimistic(String memberId, Long amount) {
         Point point = pointRepository.findByMemberIdForUpdate(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));

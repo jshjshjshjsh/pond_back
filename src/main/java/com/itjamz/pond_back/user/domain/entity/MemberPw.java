@@ -3,31 +3,31 @@ package com.itjamz.pond_back.user.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Embeddable
 @Getter
 @EqualsAndHashCode
+@ToString
 public class MemberPw {
 
     @NotNull
     @Column(name = "pw")
     private String pw;
 
-    public MemberPw(String pw) {
-        if (pw.length() < 6)
-            throw new IllegalArgumentException("패스워드 규칙에 맞지 않습니다.");
-        this.pw = pw;
-    }
-
     protected MemberPw() {}
 
-    public MemberPw encodingPw(PasswordEncoder encoder){
-        return new MemberPw(encoder.encode(this.pw));
+    private MemberPw(String encodedPw) {
+        this.pw = encodedPw;
+    }
+
+    public static MemberPw create(String rawPw, PasswordEncoder encoder) {
+        if (rawPw == null || rawPw.length() < 6) {
+            throw new IllegalArgumentException("비밀번호는 6자리 이상이어야 합니다.");
+        }
+
+        return new MemberPw(encoder.encode(rawPw));
     }
 
     public boolean match(String rawPassword, PasswordEncoder encoder) {

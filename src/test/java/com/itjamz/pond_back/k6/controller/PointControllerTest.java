@@ -64,7 +64,21 @@ class PointControllerTest {
 
 
     @Test
-    @DisplayName("포인트 입금 테스트")
+    @DisplayName("비관적락 포인트 입금 테스트")
+    void depositPessimisticTest() throws Exception{
+
+        mockMvc.perform(post("/k6/point/deposit/pessimistic")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(100L))
+                )
+                .andExpect(status().isOk());
+
+        verify(pointService).depositPessimistic(any(String.class), any(Long.class));
+    }
+
+
+    @Test
+    @DisplayName("낙관적락 포인트 입금 테스트")
     void depositOptimisticTest() throws Exception{
 
         mockMvc.perform(post("/k6/point/deposit/optimistic")

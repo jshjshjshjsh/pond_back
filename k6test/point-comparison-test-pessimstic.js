@@ -49,8 +49,8 @@ export function setup() {
  */
 export const options = {
     scenarios: {
-        // 낙관적 락 (Point)
-        optimistic_lock_strategy: {
+        // 비관적 락 (Point)
+        pessimistic_lock_strategy: {
             executor: 'ramping-vus',
             startVUs: 0,
             stages: [
@@ -59,7 +59,7 @@ export const options = {
                 { duration: '5s', target: 0 },
             ],
             gracefulRampDown: '0s',
-            exec: 'testOptimisticLock', // 실행할 함수 지정
+            exec: 'testPessimisticLock', // 실행할 함수 지정
         },
     },
     thresholds: {
@@ -73,16 +73,15 @@ export const options = {
  * 3. 실행 함수
  */
 
-// 낙관적 락 테스트
-export function testOptimisticLock(data) {
+// [Scenario 2] 비관적 락 테스트 (New Point)
+export function testPessimisticLock(data) {
     const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${data.accessToken}`
     };
 
-    // 충돌 유발을 위해 동시에 입금 요청
-    const res = http.post(`${BASE_URL}/k6/point/deposit/optimistic`, JSON.stringify(TRANSACTION_AMOUNT), { headers: headers });
+    const res = http.post(`${BASE_URL}/k6/point/deposit/pessimistic`, JSON.stringify(TRANSACTION_AMOUNT), { headers: headers });
 
-    // 낙관적 락은 충돌 시 500 또는 409 에러가 발생할 수 있음 -> 이를 Grafana에서 에러율로 확인
-    check(res, { 'Optimistic: Success': r => r.status === 200 });
+    // 비관적 락은 느리더라도 성공해야 함
+    check(res, { 'Pessimistic: Success': r => r.status === 200 });
 }

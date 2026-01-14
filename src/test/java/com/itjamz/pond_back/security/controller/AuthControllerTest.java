@@ -66,7 +66,7 @@ class AuthControllerTest { // extends 제거된 것 유지
                 .id("testuser")
                 .sabun("12345")
                 .name("test")
-                .pw(new MemberPw(passwordEncoder.encode("password")))
+                .pw(MemberPw.create("password", passwordEncoder))
                 .role(MemberRole.ROLE_NORMAL)
                 .build();
         memberRepository.save(testUser);

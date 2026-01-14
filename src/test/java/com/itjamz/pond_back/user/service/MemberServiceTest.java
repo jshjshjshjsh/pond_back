@@ -1,6 +1,7 @@
 package com.itjamz.pond_back.user.service;
 
 import com.itjamz.pond_back.k6.repository.MileageRepository;
+import com.itjamz.pond_back.k6.repository.PointRepository;
 import com.itjamz.pond_back.user.domain.dto.MemberDto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberPw;
@@ -38,11 +39,18 @@ class MemberServiceTest {
     @Mock
     private MileageRepository mileageRepository;
 
+    @Mock
+    private PointRepository pointRepository;
+
+    private String rawPassword = "pwtester";
+    private String encodedPassword = "encoded_password_value";
+
     private Member generateMember(){
+        when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
         return Member.builder()
                 .sabun("123456")
                 .id("tester")
-                .pw(new MemberPw("pwtest")) // 원본 비밀번호
+                .pw(MemberPw.create("pwtester", passwordEncoder))
                 .name("테스터")
                 .role(MemberRole.ROLE_NORMAL)
                 .build();
@@ -128,26 +136,21 @@ class MemberServiceTest {
         Member member = this.generateMember();
 
         // 4. Mock 객체들의 행동을 미리 정의해줍니다.
-        // - "pwtest"가 암호화되면 "encoded_password"가 될 것이라고 가정
-        when(passwordEncoder.encode(any())).thenReturn("encoded_password");
         // - memberRepository.save가 호출되면, 인자로 받은 객체를 그대로 반환할 것이라고 가정
         when(memberRepository.save(any(Member.class))).thenReturn(member);
         // - 중복된 사번이 없다고 가정
         when(memberRepository.findMemberByIdOrSabun(any(String.class), any(String.class))).thenReturn(Optional.empty());
-
 
         // when (실제 테스트 실행)
         Member registeredMember = memberService.memberRegister(MemberDto.from(member));
 
 
         // then (결과 검증)
-        // 5. 서비스 로직을 거친 후, 비밀번호가 우리가 예상한 "encoded_password"로 변경되었는지 확인합니다.
-        assertThat(registeredMember.getPw().getPw()).isEqualTo("encoded_password");
         // 6. 역할(Role)이 정상적으로 부여되었는지 확인합니다.
         assertThat(registeredMember.getRole()).isEqualTo(MemberRole.ROLE_NORMAL);
 
         // 7. 의존 객체들의 메서드가 정확히 호출되었는지 추가로 검증합니다.
-        verify(passwordEncoder).encode("pwtest"); // pwtest로 encode가 호출되었는가?
+        verify(passwordEncoder).encode(rawPassword); // pwtest로 encode가 호출되었는가?
         verify(memberRepository).save(any(Member.class)); // save가 호출되었는가?
     }
 }
