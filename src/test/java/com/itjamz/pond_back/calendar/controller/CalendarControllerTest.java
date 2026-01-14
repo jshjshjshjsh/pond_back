@@ -60,7 +60,7 @@ class CalendarControllerUnitTest {
     void setUp() {
         Member member = Member.builder()
                 .id("testuser")
-                .sabun("12345")
+                .sabun("123456")
                 .name("test")
                 .role(MemberRole.ROLE_NORMAL)
                 .build();

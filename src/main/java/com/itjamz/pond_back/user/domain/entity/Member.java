@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Member {
 
     @Id
@@ -31,8 +32,7 @@ public class Member {
     private MemberRole role;
 
     public void encodedPw(String rawPw, PasswordEncoder encoder){
-        MemberPw rawMemberPw = new MemberPw(rawPw);
-        this.pw = rawMemberPw.encodingPw(encoder);
+        this.pw = MemberPw.create(rawPw, encoder);
     }
 
     public void changeInfo(MemberDto memberDto) {

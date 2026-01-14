@@ -17,7 +17,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/register")
-    public ResponseEntity<Void> memberRegister(@RequestBody Member member) {
+    public ResponseEntity<Void> memberRegister(@RequestBody MemberDto member) {
         memberService.memberRegister(member);
 
         return ResponseEntity.ok().build();

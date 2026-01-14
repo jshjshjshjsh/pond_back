@@ -32,7 +32,6 @@ class WorkHistoryRepositoryTest {
         Member member = Member.builder()
                 .sabun("123456")
                 .id("tester")
-                .pw(new MemberPw("pwpwpw"))
                 .name("test")
                 .role(MemberRole.ROLE_LEADER)
                 .build();
@@ -113,7 +112,6 @@ class WorkHistoryRepositoryTest {
         Member member1 = Member.builder()
                 .sabun("123456")
                 .id("tester1")
-                .pw(new MemberPw("pwpwpw"))
                 .name("test1")
                 .role(MemberRole.ROLE_LEADER)
                 .build();
@@ -121,7 +119,6 @@ class WorkHistoryRepositoryTest {
         Member member2 = Member.builder()
                 .sabun("123457")
                 .id("tester2")
-                .pw(new MemberPw("pwpwpw"))
                 .name("test2")
                 .role(MemberRole.ROLE_NORMAL)
                 .build();

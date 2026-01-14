@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -37,6 +39,9 @@ class TeamServiceTest {
     @Mock
     private MemberTeamRepository memberTeamRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private MemberTeamJoinDto generateMemberTeamJoinDto() {
         return MemberTeamJoinDto.builder()
                 .teamId(1L)
@@ -52,10 +57,11 @@ class TeamServiceTest {
     }
 
     private Member generateMember(String sabun, String id, String pw, String name){
+        when(passwordEncoder.encode("pwtest")).thenReturn("encodedPassword");
         return Member.builder()
                 .sabun(sabun)
                 .id(id)
-                .pw(new MemberPw(pw))
+                .pw(MemberPw.create(pw, passwordEncoder))
                 .name(name)
                 .role(MemberRole.ROLE_NORMAL)
                 .build();

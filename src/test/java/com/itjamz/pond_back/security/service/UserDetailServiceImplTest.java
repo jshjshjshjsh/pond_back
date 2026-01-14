@@ -11,8 +11,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -27,15 +29,22 @@ class UserDetailServiceImplTest {
     private UserDetailServiceImpl userDetailService;
 
     @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
     private MemberService memberService;
+
+    private String rawPw = "rawPassword";
+    private String encodingPw = "rawPassword";
 
     @Test
     @DisplayName("사용자 정보 로드 성공")
     void loadUserByUsernameSucess(){
         // given
+        when(passwordEncoder.encode(rawPw)).thenReturn(encodingPw);
         Member mockMember = Member.builder()
                 .id("testuser")
-                .pw(new MemberPw("encoded_password"))
+                .pw(MemberPw.create(rawPw, passwordEncoder))
                 .role(MemberRole.ROLE_NORMAL)
                 .build();
         when(memberService.findMemberById("testuser")).thenReturn(Optional.of(mockMember));
@@ -46,7 +55,7 @@ class UserDetailServiceImplTest {
         // then
         assertThat(userDetails).isNotNull();
         assertThat(userDetails.getUsername()).isEqualTo("testuser");
-        assertThat(userDetails.getPassword()).isEqualTo("encoded_password");
+        assertThat(userDetails.getPassword()).isEqualTo(encodingPw);
         assertThat(userDetails.getAuthorities()).anyMatch(a -> a.getAuthority().equals("ROLE_NORMAL"));
         assertThat(((CustomUserDetails) userDetails).getMember()).isEqualTo(mockMember);
     }

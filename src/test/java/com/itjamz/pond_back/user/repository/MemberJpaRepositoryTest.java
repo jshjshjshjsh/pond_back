@@ -40,7 +40,7 @@ class MemberJpaRepositoryTest {
                 .builder()
                 .sabun("123456")
                 .id("tester")
-                .pw(new MemberPw(passwordEncoder.encode("pwtest")))
+                .pw(MemberPw.create("pwtest", passwordEncoder))
                 .name("테스터").build();
 
         // when
@@ -61,7 +61,7 @@ class MemberJpaRepositoryTest {
                 .builder()
                 .sabun("123456")
                 .id("tester")
-                .pw(new MemberPw(passwordEncoder.encode("pwtest")))
+                .pw(MemberPw.create("pwtest", passwordEncoder))
                 .build();
 
         // when & then
