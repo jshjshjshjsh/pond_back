@@ -145,6 +145,16 @@ public class CalendarService {
 
         workSummary.get().changeIsShare(workSummaryDto.getIsShare());
 
+        // 만약 공유 상태로 Update 될 시 팀원들에게 알림 전송(알림 구현은 안되어있음)
+        if (Boolean.TRUE.equals(workSummary.get().getIsShare())) {
+            eventPublisher.publishEvent(new WorkSummarySharedEvent(
+                    workSummary.get().getId(),
+                    member.getName(),
+                    workSummary.get().getYear(),
+                    workSummary.get().getMonth()
+            ));
+        }
+
         return workSummary.get();
     }
 
