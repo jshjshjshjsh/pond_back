@@ -6,12 +6,14 @@ import com.itjamz.pond_back.calendar.domain.entity.Work;
 import com.itjamz.pond_back.calendar.domain.entity.WorkHistory;
 import com.itjamz.pond_back.calendar.domain.entity.WorkRecordDate;
 import com.itjamz.pond_back.calendar.domain.entity.WorkSummary;
+import com.itjamz.pond_back.calendar.domain.event.WorkSummarySharedEvent;
 import com.itjamz.pond_back.calendar.repository.WorkHistoryRepository;
 import com.itjamz.pond_back.calendar.repository.WorkSummaryRepository;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.Team;
 import com.itjamz.pond_back.user.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,7 @@ public class CalendarService {
     private final TeamRepository teamRepository;
     private final WorkHistoryRepository workHistoryRepository;
     private final WorkSummaryRepository workSummaryRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void deleteWorkHistory(Long id, Member member) {
@@ -107,7 +110,19 @@ public class CalendarService {
                 .member(member)
                 .build();
 
-        return workSummaryRepository.save(workSummary);
+        WorkSummary savedWorkSummary = workSummaryRepository.save(workSummary);
+
+        // 만약 공유 상태로 Update 될 시 팀원들에게 알림 전송(알림 구현은 안되어있음)
+        if (Boolean.TRUE.equals(savedWorkSummary.getIsShare())) {
+            eventPublisher.publishEvent(new WorkSummarySharedEvent(
+                    savedWorkSummary.getId(),
+                    member.getName(),
+                    savedWorkSummary.getYear(),
+                    savedWorkSummary.getMonth()
+            ));
+        }
+
+        return savedWorkSummary;
     }
 
     @Transactional
@@ -129,6 +144,16 @@ public class CalendarService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[worksummary] 잘못된 요청");
 
         workSummary.get().changeIsShare(workSummaryDto.getIsShare());
+
+        // 만약 공유 상태로 Update 될 시 팀원들에게 알림 전송(알림 구현은 안되어있음)
+        if (Boolean.TRUE.equals(workSummary.get().getIsShare())) {
+            eventPublisher.publishEvent(new WorkSummarySharedEvent(
+                    workSummary.get().getId(),
+                    member.getName(),
+                    workSummary.get().getYear(),
+                    workSummary.get().getMonth()
+            ));
+        }
 
         return workSummary.get();
     }
