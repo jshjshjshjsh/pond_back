@@ -1,6 +1,6 @@
 package com.itjamz.pond_back.security.controller;
 
-import com.itjamz.pond_back.global.config.TestRedisConfig; // <--- 1. 임포트 확인
+import com.itjamz.pond_back.global.config.TestRedisConfig;
 import com.itjamz.pond_back.security.JwtUtil;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberPw;
@@ -14,21 +14,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean; // <--- 추가
-import org.springframework.context.annotation.Import; // <--- 추가
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations; // <--- 추가
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;          // <--- 추가
-import static org.mockito.BDDMockito.given;              // <--- 추가
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -36,8 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
-@Import(TestRedisConfig.class) // <--- 2. 핵심: 아까 만든 설정 파일 로드
-class AuthControllerTest { // extends 제거된 것 유지
+@Import(TestRedisConfig.class)
+class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,11 +48,10 @@ class AuthControllerTest { // extends 제거된 것 유지
     @Autowired
     private MemberJpaRepository memberRepository;
 
-    // RedisTemplate은 실제 Bean 대신 MockBean으로 대체하여 동작 제어
-    @MockBean
+    @MockitoBean
     private RedisTemplate<String, String> redisTemplate;
 
-    @MockBean
+    @MockitoBean
     private ValueOperations<String, String> valueOperations; // redisTemplate.opsForValue()를 위해 필요
 
     @Autowired
