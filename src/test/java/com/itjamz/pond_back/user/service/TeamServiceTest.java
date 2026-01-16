@@ -130,7 +130,7 @@ class TeamServiceTest {
 
         ReflectionTestUtils.setField(team, "id", 1L);
 
-        // --- [수정] Mockito 행동 정의 추가 ---
+        // --- Mockito 행동 정의 추가 ---
         // 1. teamRepository.save가 호출되면 team 객체를 반환하도록 설정
         when(teamRepository.save(Mockito.any(Team.class))).thenReturn(team);
 
