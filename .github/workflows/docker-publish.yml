@@ -1,5 +1,3 @@
-# .github/workflows/docker-publish.yml
-
 name: Docker Image CI and CD Trigger
 
 on:
@@ -14,34 +12,29 @@ jobs:
       packages: write
 
     steps:
-      # --- 1 & 2단계: 애플리케이션 빌드 및 이미지 푸시 (기존과 동일) ---
+      # 1. 소스 코드 체크아웃
       - name: Checkout app repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 17 and Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          java-version: '17'
-          java-distribution: 'temurin'
-      
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+      # 2. QEMU 설정 (ARM 아키텍처 빌드를 위한 에뮬레이터)
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-      - name: Build with Gradle
-        run: ./gradlew build --no-daemon
+      # 3. Docker Buildx 설정 (멀티 플랫폼 빌드 도구)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
+      # 4. GHCR 로그인
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
+      # 5. 메타데이터 추출
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
@@ -50,6 +43,7 @@ jobs:
           tags: |
             type=sha,prefix=
 
+      # 6. 빌드 및 푸시
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -57,10 +51,12 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          # AMD64, ARM64 둘 다 만듦
+          platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # --- 3단계: Kubernetes 설정 저장소 업데이트 ---
+      # 7. K8s 설정 저장소 가져오기
       - name: Checkout k8s config repository
         uses: actions/checkout@v4
         with:
@@ -68,17 +64,24 @@ jobs:
           token: ${{ secrets.CONFIG_REPO_PAT }}
           path: 'pond_k8s_config'
 
+      # 8. 이미지 태그 업데이트 및 푸시
       - name: Update image tag and push to k8s config repo
         working-directory: ./pond_k8s_config
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           
-          CONFIG_FILE="pond-back/values.yaml"
+          CONFIG_FILE="pond-front/values.yaml"
           NEW_TAG=${{ steps.meta.outputs.version }}
           
+          # yq 도구가 없으면 설치 (GitHub Runner 환경 대비)
+          if ! command -v yq &> /dev/null; then
+              wget https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+          fi
+
+          # yaml 파일 수정
           yq e ".image.tag = \"$NEW_TAG\"" -i $CONFIG_FILE
           
           git add $CONFIG_FILE
-          git commit -m "CI: Update pond-back image tag to $NEW_TAG"
+          git commit -m "CI: Update pond-front image tag to $NEW_TAG"
           git push
