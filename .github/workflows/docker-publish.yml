@@ -95,5 +95,5 @@ jobs:
           yq e ".image.tag = \"$NEW_TAG\"" -i $CONFIG_FILE
           
           git add $CONFIG_FILE
-          git commit -m "CI: Update pond-front image tag to $NEW_TAG"
+          git commit -m "CI: Update pond-back image tag to $NEW_TAG"
           git push
