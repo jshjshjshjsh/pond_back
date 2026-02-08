@@ -3,14 +3,18 @@ package com.itjamz.pond_back.user.domain.dto;
 import com.itjamz.pond_back.user.domain.entity.Member;
 import com.itjamz.pond_back.user.domain.entity.MemberPw;
 import com.itjamz.pond_back.user.domain.entity.MemberRole;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberDto {
 
     private String sabun;
