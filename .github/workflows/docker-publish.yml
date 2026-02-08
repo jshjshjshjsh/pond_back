@@ -83,7 +83,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           
-          CONFIG_FILE="pond-front/values.yaml"
+          CONFIG_FILE="pond-back/values.yaml"
           NEW_TAG=${{ steps.meta.outputs.version }}
           
           # yq 도구가 없으면 설치 (GitHub Runner 환경 대비)
@@ -95,5 +95,5 @@ jobs:
           yq e ".image.tag = \"$NEW_TAG\"" -i $CONFIG_FILE
           
           git add $CONFIG_FILE
-          git commit -m "CI: Update pond-front image tag to $NEW_TAG"
+          git commit -m "CI: Update pond-back image tag to $NEW_TAG"
           git push
