@@ -38,6 +38,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
 
+        System.out.println("==================================================");
+        System.out.println("📡 [Filter Request] URL: " + request.getRequestURI());
+        System.out.println("📨 [Filter Header] Authorization: " + authorizationHeader);
+        System.out.println("==================================================");
+
         String username = null;
         String jwt = null;
 
