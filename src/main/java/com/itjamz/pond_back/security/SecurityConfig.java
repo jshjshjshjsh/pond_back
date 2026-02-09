@@ -64,7 +64,8 @@ public class SecurityConfig {
         // 여기에 프론트엔드 서버의 주소를 추가
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost", "http://localhost:3000",
-                "http://localhost:5173", "https://your-frontend-domain.com")
+                "http://localhost:5173", "https://your-frontend-domain.com",
+                "http://pond.local", "http://pond.local:8080")
         );
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
