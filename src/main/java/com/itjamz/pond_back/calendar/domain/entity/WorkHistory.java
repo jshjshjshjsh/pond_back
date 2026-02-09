@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class WorkHistory implements Work{
 
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Embedded

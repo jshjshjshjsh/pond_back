@@ -15,7 +15,7 @@ import org.hibernate.annotations.ColumnDefault;
 @AllArgsConstructor
 public class Mileage {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ColumnDefault("0")
