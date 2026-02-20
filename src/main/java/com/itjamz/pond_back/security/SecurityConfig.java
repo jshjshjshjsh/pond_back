@@ -47,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/","/login", "/login/refresh", "/logout", "/member/register").permitAll() // 전체 허용 페이지
                         .requestMatchers("/k6/**").hasAnyRole("ADMIN", "LEADER", "NORMAL") // K6 테스트 전용 페이지
                         .requestMatchers("/hello", "/test/**").permitAll() // 테스트용
-                        .requestMatchers("/actuator/**").permitAll() // 모니터링 URL
+                        .requestMatchers("/actuator/**", "/error").permitAll() // 모니터링 URL
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
