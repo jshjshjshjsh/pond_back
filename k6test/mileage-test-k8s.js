@@ -68,8 +68,8 @@ export const options = {
       executor: 'ramping-vus',
       startVUs: 0,
       stages: [
-        { duration: '30s', target: 100 }, // 30초 동안 100명으로 증가 (Ramp-up)
-        { duration: '3m', target: 100 },  // 3분 동안 100명이 미친듯이 입출금 반복 (Stress)
+        { duration: '30s', target: 200 }, // 30초 동안 200명으로 증가 (Ramp-up)
+        { duration: '3m', target: 200 },  // 3분 동안 200명이 미친듯이 입출금 반복 (Stress)
         { duration: '10s', target: 0 },   // 10초 동안 종료 (Ramp-down)
       ],
       gracefulRampDown: '5s',
