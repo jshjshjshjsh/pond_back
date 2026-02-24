@@ -67,7 +67,8 @@ public class SecurityConfig {
                 "http://localhost", "http://localhost:3000",
                 "http://localhost:5173", "https://your-frontend-domain.com",
                 "http://pond.local", "http://pond.local:8080",
-                "http://pond.127.0.0.1.nip.io", "http://pond.127.0.0.1.nip.io:8080")
+                "http://pond.127.0.0.1.nip.io", "http://pond.127.0.0.1.nip.io:8080",
+                "https://pond.theponds.work", "https://pond.theponds.work:443")
         );
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
