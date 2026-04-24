@@ -1,5 +1,8 @@
 package com.itjamz.pond_back.aop;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -19,6 +22,7 @@ import java.lang.reflect.Method;
 public class DistributedLockAop {
 
     private final RedissonClient redissonClient;
+    private final CircuitBreakerRegistry circuitBreakerRegistry;
 
     @Around("@annotation(com.itjamz.pond_back.aop.DistributedLock)")
     public Object lock(final ProceedingJoinPoint joinPoint) throws Throwable {
@@ -30,16 +34,29 @@ public class DistributedLockAop {
         String key = createDynamicKey(signature.getParameterNames(), joinPoint.getArgs(), distributedLock.key());
         RLock lock = redissonClient.getLock(key);
 
+        CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker("redisLock");
+        boolean isLocked;
+
         try {
-            // 설정된 시간만큼 락 획득을 시도
-            boolean isLocked = lock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit());
-            if (!isLocked) {
-                throw new IllegalStateException("락 획득에 실패했습니다.");
-            }
-            // 락을 획득한 상태에서 별도의 트랜잭션으로 원본 메서드를 호출
+            // 🔥 오직 '락 획득' 과정만 서킷 브레이커로 감싸서 네트워크 지연/장애를 측정함
+            isLocked = circuitBreaker.executeCallable(() ->
+                    lock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit())
+            );
+        } catch (CallNotPermittedException e) {
+            // 서킷 브레이커가 OPEN 상태일 때 빠르게 실패(Fail-fast) 처리
+            throw new IllegalStateException("현재 요청이 많아 처리할 수 없습니다.");
+        } catch (Exception e) {
+            // Redis 통신 장애 등
+            throw new InterruptedException("락 획득 중 인터럽트/장애 발생");
+        }
+
+        if (!isLocked) {
+            throw new IllegalStateException("락 획득에 실패했습니다.");
+        }
+
+        try {
+            // 락을 획득한 상태에서 별도의 트랜잭션으로 원본 메서드를 호출 (여기는 서킷 측정 대상에서 제외!)
             return joinPoint.proceed();
-        } catch (InterruptedException e) {
-            throw new InterruptedException("락 획득 중 인터럽트 발생");
         } finally {
             if (lock.isLocked() && lock.isHeldByCurrentThread()) {
                 lock.unlock();

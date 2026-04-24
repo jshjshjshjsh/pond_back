@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Aspect
-@Component
+@Component("customOptimisticLockRetryAspect")
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 public class RetryAspect {
 

@@ -53,7 +53,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // 1. Redis에서 토큰이 블랙리스트에 있는지 확인
-            String isLogout = redisTemplate.opsForValue().get(jwt);
+            String isLogout = null;
+            try {
+                isLogout = redisTemplate.opsForValue().get(jwt);
+            } catch (Exception e) {
+                // 🔥 Redis가 뻗었을 때 필터에서 서버가 죽지 않도록 예외를 먹어치움 (블랙리스트 검증 우회)
+                System.out.println("[Fail-safe] Redis 장애로 인한 블랙리스트 검증 우회: " + e.getMessage());
+            }
 
             // 2. 블랙리스트에 없고, 토큰이 유효할 경우에만 인증 정보 설정
             if (StringUtils.hasText(isLogout)) { // isLogout이 null이거나 비어있지 않으면 로그아웃된 토큰
