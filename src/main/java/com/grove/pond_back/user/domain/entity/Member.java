@@ -1,0 +1,38 @@
+package com.grove.pond_back.user.domain.entity;
+
+import com.grove.pond_back.user.domain.dto.MemberDto;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Entity
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class Member {
+
+    @Id
+    private String sabun;
+    @NotNull
+    @Column(unique = true)
+    private String id;
+    @Embedded
+    private MemberPw pw;
+    @NotNull
+    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 15)
+    @NotNull
+    private MemberRole role;
+
+    public void encodedPw(String rawPw, PasswordEncoder encoder){
+        this.pw = MemberPw.create(rawPw, encoder);
+    }
+
+    public void changeInfo(MemberDto memberDto) {
+        this.role = memberDto.getRole();
+    }
+}
